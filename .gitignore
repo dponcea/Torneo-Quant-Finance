@@ -1,0 +1,36 @@
+# Última actualización: 2026-10-21 21:54 (hora de Chile)
+# Archivos que Git no debe subir al repositorio
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Base de Bloomberg del laboratorio: sujeta a los términos de uso de Bloomberg, NO se redistribuye.
+# Cada usuario deja su copia en data/ (ver README). Datos intermedios: el código los regenera.
+data/*.xlsx
+data/*.xls
+data/*.csv
+data/*.parquet
+base_usdclp*.xlsx
+~$*.xlsx
+
+# Archivos auxiliares de LaTeX (TeXstudio los crea al compilar)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# Configuración local de editores y del sistema
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
