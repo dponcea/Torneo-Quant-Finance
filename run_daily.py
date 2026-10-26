@@ -4,6 +4,7 @@ Uso (desde la carpeta del proyecto, después de actualizar el Excel de la base):
 
     python run_daily.py                    # usa la última fecha disponible en la base
     python run_daily.py --fecha 2023-12-28 # simula la decisión de un día pasado
+    python run_daily.py --fecha 2023-12-28 --desde 2023-11-13   # tablero con seguimiento desde esa fecha
 
 Qué hace, con el modelo congelado (M1 + Platt + Kelly fraccional, ver src/config.py):
   1. Construye la tabla de variables con información hasta el cierre de la fecha de decisión.
@@ -12,6 +13,9 @@ Qué hace, con el modelo congelado (M1 + Platt + Kelly fraccional, ver src/confi
   3. Calibra con Platt usando todas las predicciones fuera de muestra de los años anteriores.
   4. Aplica la regla de Kelly discreta y entrega la exposición en {-3, -1, 0, +1, +3}.
   5. Agrega una fila a reports/senales_diarias.csv (una por fecha de decisión).
+  6. Genera el tablero de la mesa de dinero en reports/tablero.html (y una copia con fecha en
+     reports/tableros/): señal del día, resultado del seguimiento frente a las referencias,
+     riesgo, historial de decisiones, estado de los datos y huella del código.
 
 Cuándo correrlo: después del cierre de Nueva York (17:00 ET, ~18:00-19:00 hora de Chile),
 cuando la base ya trae los cierres del día de MXN, ZAR, BRL, DXY, EURUSD y S&P 500.
@@ -22,7 +26,7 @@ El candado usa la fecha del sistema del computador: evita un accidente, pero no 
 garantía (cambiar la fecha del sistema lo desactiva). La garantía es el registro de
 experimentos y la huella del código de cada señal.
 """
-# Última actualización: 2026-10-21 21:54 (hora de Chile) — comentario sobre el candado de fecha (auditoría A8); sin cambios de lógica
+# Última actualización: 2026-10-25 20:16 (hora de Chile) — calcular() devuelve el contexto para el tablero; genera reports/tablero.html (--no-tablero, --desde); la señal no cambia
 import argparse
 import datetime as dt
 import hashlib
@@ -59,7 +63,11 @@ def _predecir(tabla, cols, ventana, anio, embargo=5):
     return pd.Series(res.predict(modelo._diseno(filas, cols, media, desv)), index=filas.index)
 
 
-def senal(fecha=None):
+def calcular(fecha=None):
+    """Calcula la señal de `fecha` y devuelve (fila del registro, contexto para el tablero).
+
+    El contexto trae la base recortada a la fecha, la tabla de variables, las probabilidades
+    calibradas y la trayectoria de exposiciones desde 2011: el tablero no recalcula el modelo."""
     x = datos.cargar_base()
     ultima_base = x.index.max()
     fecha = pd.Timestamp(fecha) if fecha else ultima_base
@@ -104,7 +112,7 @@ def senal(fecha=None):
 
     k, k_prev = pos.loc[fecha], (pos.iloc[-2] if len(pos) > 1 else 0.0)
     mu = (2 * p_cal.loc[fecha] - 1) * tabla.loc[fecha, "abs_r_60"]
-    return {
+    fila = {
         "fecha_decision": fecha.date().isoformat(),
         "ultima_fecha_base": ultima_base.date().isoformat(),
         "p_bruta": round(float(p_anio.loc[fecha]), 4),
@@ -122,6 +130,14 @@ def senal(fecha=None):
         "emitida": dt.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "avisos": " | ".join(avisos),
     }
+    contexto = {"x": x, "tabla": tabla, "p_cal": p_cal, "pos": pos, "fecha": fecha,
+                "mu": float(mu), "sigma": float(tabla.loc[fecha, "sd_r_60"]), "k_prev": float(k_prev)}
+    return fila, contexto
+
+
+def senal(fecha=None):
+    """Fila del registro para `fecha` (la usa tests/test_run_daily.py)."""
+    return calcular(fecha)[0]
 
 
 def registrar(fila):
@@ -138,9 +154,12 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--fecha", help="fecha de decisión AAAA-MM-DD (por defecto, la última de la base)")
     ap.add_argument("--no-registrar", action="store_true", help="no escribir en reports/senales_diarias.csv")
+    ap.add_argument("--no-tablero", action="store_true", help="no generar el tablero HTML (reports/tablero.html)")
+    ap.add_argument("--desde", help="inicio del seguimiento en el tablero AAAA-MM-DD (por defecto, "
+                    "C.INICIO_MONITOREO; en una simulación anterior, el 1 de enero del año de la fecha)")
     args = ap.parse_args()
 
-    s = senal(args.fecha)
+    s, ctx = calcular(args.fecha)
     print(f"\nSeñal USD/CLP · decisión al cierre del {s['fecha_decision']} (para la jornada siguiente)")
     print(f"  Probabilidad de que el dólar suba en exceso de carry: {s['p_calibrada']:.1%} "
           f"(bruta {s['p_bruta']:.1%}; señal NY {s['senal_ny']:+.2f})")
@@ -153,6 +172,10 @@ def main():
     if not args.no_registrar:
         registrar(s)
         print(f"  Registrada en {ARCHIVO_REGISTRO.relative_to(C.RAIZ)}")
+    if not args.no_tablero:
+        from src import tablero
+        ruta = tablero.generar(s, ctx, desde=args.desde, archivo_registro=ARCHIVO_REGISTRO)
+        print(f"  Tablero: {ruta.relative_to(C.RAIZ)}  (ábrelo con doble clic; funciona sin internet)")
 
 
 if __name__ == "__main__":

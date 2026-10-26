@@ -1,6 +1,6 @@
 # Torneo USD/CLP · Itaú–FEN
 
-Última actualización: 2026-10-21 21:54 (hora de Chile). Autores: Diego Ponce y Simón Canales.
+Última actualización: 2026-10-25 21:32 (hora de Chile). Autores: Diego Ponce y Simón Canales.
 
 Modelo para predecir la dirección del USD/CLP de la jornada siguiente (en exceso de carry) y traducirla en exposición −3/−1/0/+1/+3.
 
@@ -15,6 +15,8 @@ Modelo para predecir la dirección del USD/CLP de la jornada siguiente (en exces
 - `notebooks/01_modelo_nucleo.ipynb`: todo el análisis, en 16 secciones (0 a 15: versión, escalera M0 → M1 → M2 → M1C, tests, valor económico, robustez, ejecución realista, costos, evaluación formal frente a las referencias, perfiles de inversionista y E13, tablas y figuras del informe, decisiones).
 - `notebooks/crear_notebook.py`: genera el notebook (editar aquí y regenerar).
 - `run_daily.py`: señal diaria para el monitoreo en vivo (exposición de la jornada siguiente) y registro en `reports/senales_diarias.csv`.
+- `src/tablero.py` y `src/tablero_plantilla.html`: tablero HTML de la mesa de dinero que genera `run_daily.py`.
+- `dashboard/`: tablero interactivo en Streamlit (`streamlit run dashboard/app.py`), con 7 páginas: señal, desempeño, riesgo, base de datos, variables, registro y cómo funciona.
 - `tests/test_run_daily.py`: verifica que `run_daily.py` reproduce exactamente el backtest.
 - `reports/registro_experimentos.csv`: todas las pruebas realizadas (E01–E13), para el Deflated Sharpe Ratio.
 - `src/figuras.py`: figuras del informe (se guardan en `reports/figuras/`).
@@ -32,8 +34,11 @@ La base (`data/base_usdclp*.xlsx`) es del Laboratorio Bloomberg FEN y está suje
 ## Señal diaria (monitoreo en vivo, 13-nov a 1-dic)
 1. Actualiza el Excel de la base con los cierres del día (después de las ~19:00 hora de Chile, cuando cerró Nueva York).
 2. `python run_daily.py` → imprime la probabilidad y la exposición (−3/−1/0/+1/+3) para la jornada siguiente y la anota en `reports/senales_diarias.csv`.
-3. Si avisa que una serie no tiene cierre del día, la señal usa el último disponible: revisar antes de operar.
+3. Abre `reports/tablero.html` (doble clic; funciona sin internet): señal del día y por qué la regla eligió esa exposición, resultado del seguimiento frente a las referencias, riesgo, historial (contrastado con lo registrado), estado de cada serie y huella del código. Cada día queda además una copia en `reports/tableros/`.
+4. Si avisa que una serie no tiene cierre del día, la señal usa el último disponible: revisar antes de operar.
 
-Para probarlo antes del congelamiento: `python run_daily.py --fecha 2023-12-28 --no-registrar`.
+**Tablero interactivo:** `streamlit run dashboard/app.py` abre en el navegador una app para explorar la señal, el desempeño frente a las referencias, el riesgo y la base. No registra señales: la señal oficial se emite con `run_daily.py`.
+
+Para probarlo antes del congelamiento: `python run_daily.py --fecha 2023-12-28 --desde 2023-11-13 --no-registrar` (simula un monitoreo del 13-nov al 28-dic de 2023).
 
 Mientras el modelo no esté congelado (8-nov), todo el código corta los datos el 2023-12-31. **No mirar el tramo 2024–2026 antes de la corrida única.**

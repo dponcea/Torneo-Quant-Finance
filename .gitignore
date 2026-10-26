@@ -1,4 +1,4 @@
-# Última actualización: 2026-10-21 21:54 (hora de Chile)
+# Última actualización: 2026-10-25 22:43 (hora de Chile) — tableros de simulación fuera del repositorio
 # Archivos que Git no debe subir al repositorio
 
 # Python
@@ -34,3 +34,8 @@ base_usdclp*.xlsx
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Tableros HTML que genera run_daily.py. Hasta el monitoreo (13-nov) son simulaciones con datos de 2023
+# y no se suben. Desde el 13-nov se borran estas dos líneas para que los tableros diarios queden como evidencia.
+reports/tablero.html
+reports/tableros/

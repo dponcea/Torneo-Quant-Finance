@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablero USD/CLP</title>
+<!-- Plantilla del tablero (src/tablero.py la llena con los datos del día). Última actualización: 2026-10-25 22:04 (hora de Chile) — precio en pesos (cierre, movimiento del dólar, gráfico con compras y ventas, PnL en pesos), separado del resultado en % -->
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#14181f; --ink2:#4a5361; --ink3:#7b8492; --line:#e3e6eb; --line2:#eef0f3;
+  --modelo:#1f5fd6; --comprar1:#d97a0b; --comprar3:#b8452f; --no_operar:#8a929e; --tam_fijo:#7b4fc4;
+  --largo:#0f8a6a; --corto:#c2410c; --ok:#0f8a6a; --warn:#b7791f; --bad:#c0392b;
+  --okbg:#e6f4ef; --warnbg:#fbf2e0; --badbg:#fbe9e7; --chip:#eef2fb;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1217; --panel:#171b22; --ink:#e8ebf0; --ink2:#b3bac5; --ink3:#7f8895; --line:#2a303a; --line2:#20252d;
+    --modelo:#5b8ff9; --comprar1:#f0a23b; --comprar3:#e06a52; --no_operar:#8d96a3; --tam_fijo:#a685e8;
+    --largo:#34c39a; --corto:#f08a4b; --ok:#34c39a; --warn:#e0b04a; --bad:#ef6b5b;
+    --okbg:#14302a; --warnbg:#3a2f15; --badbg:#3d1e1b; --chip:#1f2735;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1217; --panel:#171b22; --ink:#e8ebf0; --ink2:#b3bac5; --ink3:#7f8895; --line:#2a303a; --line2:#20252d;
+  --modelo:#5b8ff9; --comprar1:#f0a23b; --comprar3:#e06a52; --no_operar:#8d96a3; --tam_fijo:#a685e8;
+  --largo:#34c39a; --corto:#f08a4b; --ok:#34c39a; --warn:#e0b04a; --bad:#ef6b5b;
+  --okbg:#14302a; --warnbg:#3a2f15; --badbg:#3d1e1b; --chip:#1f2735;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:16px}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;padding:8px 0 16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+h1{font-size:20px;margin:0;font-weight:650;letter-spacing:-.01em}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--ink3);margin-top:2px}
+h2{font-size:15px;margin:0 0 12px;font-weight:650}
+h2 .sub{font-weight:400;color:var(--ink3);font-size:13px;margin-left:6px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--ink2);font-size:13px}
+.meta b{color:var(--ink);font-weight:600}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.02em}
+.b-sim{background:var(--warnbg);color:var(--warn)} .b-live{background:var(--okbg);color:var(--ok)}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-warn{background:var(--warnbg);color:var(--warn)} .b-bad{background:var(--badbg);color:var(--bad)}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.alert{padding:9px 12px;border-radius:8px;font-size:13px;border:1px solid transparent}
+.alert.warn{background:var(--warnbg);color:var(--ink);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.alert.bad{background:var(--badbg);color:var(--ink);border-color:color-mix(in srgb,var(--bad) 35%,transparent)}
+.alert.info{background:var(--chip);color:var(--ink)}
+.grid{display:grid;gap:16px}
+.g-hero{grid-template-columns:minmax(260px,1fr) minmax(300px,1.35fr)}
+.g-2{grid-template-columns:1fr 1fr}
+@media (max-width:860px){.g-hero,.g-2{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+section{margin-bottom:16px}
+.expo{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.expo .num{font-size:64px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.expo .dir{font-size:18px;font-weight:600}
+.pos{color:var(--largo)} .neg{color:var(--corto)} .cero{color:var(--ink2)}
+.cambio{margin-top:6px;color:var(--ink2);font-size:13px}
+.prob{margin:18px 0 6px}
+.prob .bar{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,color-mix(in srgb,var(--corto) 55%,var(--panel)),var(--line2) 50%,color-mix(in srgb,var(--largo) 55%,var(--panel)))}
+.prob .mid{position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:var(--ink3)}
+.prob .mk{position:absolute;top:-5px;width:4px;height:20px;border-radius:2px;background:var(--ink);transform:translateX(-2px)}
+.prob .lbl{display:flex;justify-content:space-between;color:var(--ink3);font-size:12px;margin-top:6px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.kv div{background:var(--line2);border-radius:8px;padding:8px 10px}
+.kv .k{font-size:12px;color:var(--ink3)} .kv .v{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line2);white-space:nowrap}
+th{font-size:12px;font-weight:600;color:var(--ink3);text-transform:none}
+td:first-child,th:first-child{text-align:left}
+td.l,th.l{text-align:left}
+tr.sel td{background:color-mix(in srgb,var(--modelo) 10%,transparent);font-weight:600}
+.scroll{overflow-x:auto}
+.ubar{display:inline-block;height:8px;border-radius:2px;vertical-align:middle}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);padding:5px 12px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi .k{font-size:12px;color:var(--ink3)} .kpi .v{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .s{font-size:12px;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink2);margin:4px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend span.off{opacity:.35}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;overflow:visible}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.12);white-space:nowrap;z-index:2;display:none}
+.tip b{display:block;margin-bottom:3px}
+.tip .row{display:flex;justify-content:space-between;gap:14px}
+.axis text{fill:var(--ink3);font-size:11px}
+.axis line,.grid line{stroke:var(--line2)}
+.note{font-size:12px;color:var(--ink3);margin-top:8px}
+.mono{font-family:var(--mono);font-size:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+footer{color:var(--ink3);font-size:12px;padding:8px 0 24px}
+.themebtn{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);padding:3px 10px;border-radius:999px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const D = /*__DATOS__*/null;
+(function(){
+const $ = (h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;};
+const nf = (v,d=1)=> v==null||!isFinite(v) ? '—' : v.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d});
+const sg = (v,d=1)=> v==null||!isFinite(v) ? '—' : (v>0?'+':v<0?'−':'')+nf(Math.abs(v),d);
+const kfmt = k => k>0?`+${k}`:k<0?`−${Math.abs(k)}`:'0';
+const kcls = k => k>0?'pos':k<0?'neg':'cero';
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fdate = s => {const [y,m,d]=s.split('-');return `${+d} ${MES[+m-1]} ${y}`;};
+const S = D.senal, M = D.meta, R = D.riesgo;
+const app = document.getElementById('app');
+
+// ---------- cabecera ----------
+const live = M.modo==='monitoreo';
+let diaMon = '';
+if(live){ const w=D.ventanas.find(v=>v.nombre==='seguimiento'); if(w) diaMon=` · jornada ${w.fechas.length+1} del monitoreo`; }
+app.appendChild($(`<header>
+  <h1>Torneo USD/CLP · Tablero de la mesa<small>Ponce y Canales · M1 + Platt + Kelly discreto (c = ${nf(M.kelly_c,2)}) · costo ${nf(M.costo_pb,0)} pb por unidad</small></h1>
+  <div class="meta">
+    <span class="badge ${live?'b-live':'b-sim'}">${live?'MONITOREO EN VIVO':'SIMULACIÓN · datos de validación'}</span>
+    <span>Decisión al cierre del <b>${fdate(S.fecha_decision)}</b>${diaMon}</span>
+    <span>Generado <b>${M.generado}</b></span>
+    <span>Código <b class="mono">${S.huella_codigo}</b></span>
+    <button class="themebtn" id="tema">Tema</button>
+  </div></header>`));
+
+// ---------- avisos ----------
+const al = [];
+if(!live) al.push(['warn',`Simulación: la fecha de decisión es anterior al monitoreo (${fdate(M.inicio_monitoreo)} – ${fdate(M.fin_monitoreo)}). El «seguimiento» parte el ${fdate(M.desde)}.`]);
+if(M.candado) al.push(['info',`Candado activo hasta el congelamiento (${fdate(M.congelamiento)}): solo se aceptan fechas hasta 2023.`]);
+if(S.avisos) al.push(['bad',`Series sin cierre en la fecha de decisión: ${S.avisos}. La señal NY usa el último dato disponible (hasta 3 jornadas).`]);
+const atr = D.datos.filter(d=>d.estado!=='ok');
+if(atr.length) al.push(['warn',`Datos atrasados o faltantes: ${atr.map(d=>d.serie).join(', ')}. Ver «Estado de los datos».`]);
+const dif = D.historial.filter(h=>h.coincide===false);
+if(dif.length) al.push(['bad',`La exposición reconstruida hoy difiere de la registrada en ${dif.length} jornada(s) (${dif.map(h=>fdate(h.fecha)).join(', ')}). Posible revisión de datos en la base: revisar antes de operar.`]);
+if(S.fecha_decision!==S.ultima_fecha_base) al.push(['info',`La base llega hasta el ${fdate(S.ultima_fecha_base)}; esta decisión usa datos hasta el ${fdate(S.fecha_decision)}.`]);
+if(al.length){const box=$(`<div class="alerts"></div>`);al.forEach(([c,t])=>box.appendChild($(`<div class="alert ${c}">${t}</div>`)));app.appendChild(box);}
+
+// ---------- señal del día ----------
+const k=S.exposicion, kp=S.exposicion_anterior, ch=S.cambio;
+const accion = ch===0 ? 'Sin operación: se mantiene la posición.' :
+  `${ch>0?'Comprar':'Vender'} ${Math.abs(ch)} unidad${Math.abs(ch)>1?'es':''} de USD (de ${kfmt(kp)} a ${kfmt(k)}); costo ≈ ${nf(Math.abs(ch)*M.costo_pb,0)} pb.`;
+const pp = S.p_calibrada*100;
+const umax = Math.max(...D.utilidades.map(u=>Math.abs(u.u)),1e-9);
+const hero = $(`<section class="grid g-hero"></section>`);
+hero.appendChild($(`<div class="panel">
+  <h2>Señal para la jornada siguiente</h2>
+  <div class="expo"><span class="num ${kcls(k)}">${kfmt(k)}</span><span class="dir ${kcls(k)}">${S.direccion}</span></div>
+  <div class="cambio">${accion}</div>
+  <div class="cambio">Cierre de hoy: <b>$${nf(S.spot,2)}</b> (${sg(S.spot-S.spot_ant,2)} pesos en el día)</div>
+  <div class="prob">
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span>Probabilidad calibrada de que el dólar suba en exceso de carry</span><b>${nf(pp,1)} %</b></div>
+    <div class="bar" style="margin-top:8px"><div class="mid"></div><div class="mk" style="left:${Math.min(Math.max((pp-40)/20*100,0),100)}%"></div></div>
+    <div class="lbl"><span>40 % · baja</span><span>50 %</span><span>sube · 60 %</span></div>
+  </div>
+  <div class="kv">
+    <div><div class="k">Retorno esperado μ</div><div class="v">${sg(S.mu_pb,1)} pb</div></div>
+    <div><div class="k">Riesgo diario σ (60 d)</div><div class="v">${nf(S.sigma_pb,1)} pb</div></div>
+    <div><div class="k">Señal NY</div><div class="v">${sg(S.senal_ny,2)}</div></div>
+    <div><div class="k">Probabilidad bruta</div><div class="v">${nf(S.p_bruta*100,1)} %</div></div>
+  </div>
+  <div class="note">Señal NY = promedio de MXN, ZAR, BRL, DXY, −EURUSD y −S&amp;P 500 del día, cada uno dividido por su volatilidad de 250 días. Platt: a = ${nf(S.platt_a,3)}, b = ${nf(S.platt_b,3)}.</div>
+</div>`));
+const ut = $(`<div class="panel"><h2>Por qué esta exposición<span class="sub">la regla elige el máximo de U(k), en pb por día</span></h2>
+  <div class="scroll"><table><thead><tr><th>k</th><th>Ganancia k·μ</th><th>Riesgo −k²σ²/2c</th><th>Costo del cambio</th><th>U(k)</th><th class="l" style="width:34%"></th></tr></thead><tbody></tbody></table></div>
+  <div class="note">U(k) = k·μ − k²·σ²/(2c) − costo·|k − k<sub>anterior</sub>|, con μ = (2p − 1)·E|r|<sub>60</sub>. La abstención (k = 0) gana cuando la ventaja no paga el riesgo ni el costo. Posición anterior: ${kfmt(kp)}.</div></div>`);
+const tb = ut.querySelector('tbody');
+D.utilidades.forEach(u=>{
+  const w = Math.abs(u.u)/umax*48;
+  const bar = u.u>=0 ? `<span style="display:inline-block;width:50%"></span><span class="ubar" style="width:${w}%;background:var(--largo)"></span>`
+                     : `<span style="display:inline-block;width:${50-w}%"></span><span class="ubar" style="width:${w}%;background:var(--corto)"></span>`;
+  tb.appendChild($(`<tr class="${u.k===k?'sel':''}"><td>${kfmt(u.k)}${u.k===k?' ◀':''}</td><td>${sg(u.ganancia,2)}</td><td>${sg(u.riesgo,2)}</td><td>${sg(u.costo,2)}</td><td>${sg(u.u,2)}</td><td class="l" style="font-size:0">${bar}</td></tr>`));
+});
+hero.appendChild(ut);
+app.appendChild(hero);
+
+// ---------- seguimiento ----------
+const COL = {modelo:'--modelo',comprar1:'--comprar1',comprar3:'--comprar3',no_operar:'--no_operar',tam_fijo:'--tam_fijo'};
+const NOM = Object.assign({modelo:'Modelo (M1 + Kelly)'}, D.referencias);
+const seg = $(`<section class="panel"><h2>Resultado neto acumulado frente a las referencias<span class="sub">% del nocional por unidad, neto de carry y costos (${nf(M.costo_pb,0)} pb)</span></h2>
+  <div class="tabs"></div><div class="kpis"></div><div class="legend"></div><div class="chart" id="c1"></div><div class="chart" id="c2" style="margin-top:4px"></div><div class="chart" id="c3" style="margin-top:10px"></div><div class="chart" id="c4" style="margin-top:14px"></div>
+  <div class="scroll" style="margin-top:14px"><table id="tm"></table></div>
+  <div class="note">El último gráfico es el mercado en pesos: precio de cierre del USD/CLP, en verde (rojo) el día siguiente a una decisión de compra (venta), y ▲/▼ en cada cambio de posición. El resultado del modelo se mide en % del nocional (primer gráfico). Cada estrategia parte sin posición al inicio de la ventana y paga el costo de entrar. La última jornada (la decisión de hoy) aún no tiene resultado y no entra en las cifras. «Exposición fija 1» es ambigua en las bases: se muestran las dos lecturas (+1 siempre y señal M1 con tamaño 1). Con pocas jornadas, el Sharpe y la tasa de acierto son muy ruidosos.</div></section>`);
+app.appendChild(seg);
+const hidden = new Set(['comprar3']);
+let cur = 0;
+const tabs = seg.querySelector('.tabs');
+D.ventanas.forEach((w,i)=>{const b=$(`<button>${w.etiqueta} <span style="opacity:.6">· ${w.fechas.length} j.</span></button>`);b.onclick=()=>{cur=i;drawSeg();};tabs.appendChild(b);});
+const leg = seg.querySelector('.legend');
+Object.keys(COL).forEach(key=>{const s=$(`<span data-k="${key}"><i style="background:var(${COL[key]});${key==='modelo'?'height:4px':''}"></i>${NOM[key]}</span>`);
+  s.onclick=()=>{ if(key==='modelo')return; hidden.has(key)?hidden.delete(key):hidden.add(key); drawSeg(); }; leg.appendChild(s);});
+
+function drawSeg(){
+  const w = D.ventanas[cur];
+  [...tabs.children].forEach((b,i)=>b.classList.toggle('on',i===cur));
+  [...leg.children].forEach(s=>s.classList.toggle('off',hidden.has(s.dataset.k)));
+  const m = w.metricas, mm = m.modelo;
+  const refs = ['comprar1','no_operar','tam_fijo','comprar3'];
+  const mejor = refs.reduce((a,b)=> (m[b].acum>m[a].acum?b:a));
+  seg.querySelector('.kpis').innerHTML = `
+    <div class="kpi"><div class="k">Modelo, acumulado</div><div class="v ${mm.acum>0?'pos':mm.acum<0?'neg':''}">${sg(mm.acum,2)} %</div><div class="s">${fdate(w.desde)} – ${fdate(w.hasta)}</div></div>
+    <div class="kpi"><div class="k">vs mejor referencia</div><div class="v">${sg(mm.acum-m[mejor].acum,2)} pp</div><div class="s">${NOM[mejor]}: ${sg(m[mejor].acum,2)} %</div></div>
+    <div class="kpi"><div class="k">vs comprar siempre (+1)</div><div class="v">${sg(mm.acum-m.comprar1.acum,2)} pp</div><div class="s">${sg(m.comprar1.acum,2)} %</div></div>
+    <div class="kpi"><div class="k">Pérdida máxima</div><div class="v">${sg(mm.maxdd,2)} %</div><div class="s">actual ${sg(mm.dd_actual,2)} %</div></div>
+    <div class="kpi"><div class="k">Acierto en días activos</div><div class="v">${nf(mm.acierto,1)} %</div><div class="s">${mm.dias_activos} de ${mm.jornadas} jornadas con posición</div></div>
+    <div class="kpi"><div class="k">Sharpe anualizado</div><div class="v">${nf(mm.sharpe,2)}</div><div class="s">vol. ${nf(mm.vol,1)} % · costos ${nf(mm.costos,2)} %</div></div>`;
+  const series = Object.keys(COL).filter(k=>!hidden.has(k)).map(k=>({key:k,label:NOM[k],color:css(COL[k]),values:w.curvas[k],width:k==='modelo'?2.4:1.4}));
+  lineChart(document.getElementById('c1'), w.fechas, series, {h:300, fmt:v=>sg(v,2)+' %', zero:true, extra:i=>`<div class="row"><span>Exposición</span><b class="${kcls(w.k[i])}">${kfmt(w.k[i])}</b></div><div class="row"><span>Retorno en exceso</span><span>${sg(w.rex_pb[i],1)} pb</span></div><div class="row"><span>PnL del día</span><span>${sg(w.pnl_pb[i],1)} pb</span></div>`});
+  expoStrip(document.getElementById('c2'), w.fechas, w.k);
+  lineChart(document.getElementById('c3'), w.fechas, [{key:'p',label:'p calibrada',color:css('--modelo'),values:w.p.map(v=>v*100),width:1.4}], {h:130, fmt:v=>nf(v,1)+' %', ref:50, title:'Probabilidad calibrada (%)'});
+  priceChart(document.getElementById('c4'), w);
+  const row = (lab,f)=>`<tr><td>${lab}</td>${Object.keys(COL).map(k=>`<td>${f(m[k],k)}</td>`).join('')}</tr>`;
+  document.getElementById('tm').innerHTML = `<thead><tr><th></th>${Object.keys(COL).map(k=>`<th><span class="dot" style="background:var(${COL[k]})"></span>${NOM[k]}</th>`).join('')}</tr></thead><tbody>
+    ${row('Acumulado neto %',x=>sg(x.acum,2))}${row('Anualizado %',x=>sg(x.anual,1))}${row('Volatilidad anual %',x=>nf(x.vol,1))}
+    ${row('Sharpe',x=>nf(x.sharpe,2))}${row('Pérdida máxima %',x=>sg(x.maxdd,2))}${row('Costos pagados %',x=>nf(x.costos,2))}${row('Unidades transadas',x=>nf(x.rotacion,0))}</tbody>`;
+  // distribución de exposiciones
+}
+drawSeg();
+
+// ---------- riesgo ----------
+const rg = $(`<section class="grid g-2"></section>`);
+rg.appendChild($(`<div class="panel"><h2>Riesgo de la posición de hoy<span class="sub">exposición ${kfmt(k)}</span></h2>
+  <div class="kv" style="margin-top:0">
+    <div><div class="k">σ diaria de la posición</div><div class="v">${nf(R.sigma_pos_pb,1)} pb</div></div>
+    <div><div class="k">VaR 95 % 1 día (normal)</div><div class="v">${nf(R.var95_normal_pb,1)} pb</div></div>
+    <div><div class="k">VaR 95 % histórico (250 j.)</div><div class="v">${nf(R.var95_hist_pb,1)} pb</div></div>
+    <div><div class="k">Peor día en 250 j.</div><div class="v">${nf(R.peor_250_pb,1)} pb</div></div>
+    <div><div class="k">VaR normal por USD 1 MM</div><div class="v">$${nf(R.clp_por_millon,0)}</div></div>
+    <div><div class="k">Carry de la posición</div><div class="v">${sg(R.carry_dia_pb,2)} pb/día</div></div>
+    <div><div class="k">VaR 95 % por unidad (±1)</div><div class="v">${nf(1.645*R.sigma_pb,1)} pb</div></div>
+  </div>
+  <div class="note">σ del USD/CLP en exceso de carry, 60 jornadas: ${nf(R.sigma_pb,1)} pb. VaR en pesos para un nocional de USD 1 millón por unidad de exposición, al spot de $${nf(R.spot,2)}. Diferencial de tasas CLP − USD: ${sg(R.carry_anual_pct,2)} % anual (un largo en USD lo paga; un corto lo recibe).</div></div>`));
+const mk = $(`<div class="panel"><h2>Contexto de mercado<span class="sub">no entra al modelo</span></h2><div class="scroll"><table><thead><tr><th>Serie</th><th>Último</th><th>Fecha</th><th>Var. 20 j.</th><th>Percentil 5 años</th></tr></thead><tbody></tbody></table></div>
+  <div class="note">El percentil compara el último valor con los últimos 5 años (100 = máximo del período).</div></div>`);
+D.mercado.forEach(r=>mk.querySelector('tbody').appendChild($(`<tr><td>${r.nombre}</td><td>${nf(r.valor,2)}</td><td>${fdate(r.fecha)}</td><td>${sg(r.var20,1)} %</td><td>${nf(r.percentil5a,0)}</td></tr>`)));
+rg.appendChild(mk);
+app.appendChild(rg);
+
+// ---------- historial ----------
+const hs = $(`<section class="panel" style="margin-top:16px"><h2>Historial de decisiones<span class="sub">últimas 30 jornadas · ${D.n_registradas} señales en reports/senales_diarias.csv</span></h2>
+  <div class="scroll"><table><thead><tr><th>Decisión al cierre del</th><th>Cierre ($)</th><th>Señal NY</th><th>Exposición</th><th>Dólar t+1 ($)</th><th>Retorno en exceso t+1 (pb)</th><th>PnL neto (pb)</th><th>PnL neto ($, USD 1 MM)</th><th>Registrada</th><th class="l">Emitida</th><th class="l">Código</th></tr></thead><tbody></tbody></table></div>
+  <div class="note">En pesos, el mercado: cierre y movimiento del dólar al día siguiente. El resultado del modelo, en pb del nocional (exposición × retorno en exceso de carry − costo) y en pesos para USD 1 millón por unidad (≈ pb × nocional × tipo de cambio). El movimiento en pesos y el PnL no coinciden exactamente: el PnL descuenta el carry y depende de la exposición. «Registrada» es la exposición que quedó anotada el día de la decisión; si difiere de la reconstruida hoy, la base cambió (revisión de datos) y hay que revisarlo. Las fechas sin registro son reconstrucciones.</div></section>`);
+D.historial.forEach(h=>{
+  const reg = h.k_registrada==null ? '<span style="color:var(--ink3)">—</span>' : (h.coincide ? `<span class="badge b-ok">${kfmt(h.k_registrada)} ✓</span>` : `<span class="badge b-bad">${kfmt(h.k_registrada)} ≠</span>`);
+  hs.querySelector('tbody').appendChild($(`<tr><td>${fdate(h.fecha)}</td><td>${nf(h.spot,2)}</td><td>${sg(h.ny,2)}</td><td class="${kcls(h.k)}"><b>${kfmt(h.k)}</b></td><td>${h.dspot==null?'<i style="color:var(--ink3)">abierta</i>':sg(h.dspot,2)}</td><td>${h.rex_pb==null?'—':sg(h.rex_pb,1)}</td><td class="${h.pnl_pb>0?'pos':h.pnl_pb<0?'neg':''}">${h.pnl_pb==null?'—':sg(h.pnl_pb,1)}</td><td class="${h.pnl_clp>0?'pos':h.pnl_clp<0?'neg':''}">${h.pnl_clp==null?'—':sg(h.pnl_clp,0)}</td><td>${reg}</td><td class="l">${h.emitida||'—'}</td><td class="l mono">${h.huella||'—'}</td></tr>`));
+});
+app.appendChild(hs);
+
+// ---------- datos y huella ----------
+const dh = $(`<section class="grid g-2" style="margin-top:16px"></section>`);
+const de = $(`<div class="panel"><h2>Estado de los datos<span class="sub">${M.base_archivo} · modificada ${M.base_modificada||'—'}</span></h2><div class="scroll"><table><thead><tr><th>Serie</th><th class="l" style="min-width:190px">Uso</th><th>Último dato</th><th>Atraso (días)</th><th>Estado</th></tr></thead><tbody></tbody></table></div>
+  <div class="note">Atraso en días corridos respecto de la fecha de decisión. Las tasas toleran algunos días (se usa el último valor publicado). Insumos de hoy: señal NY ${sg(D.insumos.ny,3)}, r<sub>CLP</sub> ${sg(D.insumos.r_clp,3)}, E|r|<sub>60</sub> ${nf(D.insumos.abs_r_60*1e4,1)} pb, σ<sub>60</sub> ${nf(D.insumos.sd_r_60*1e4,1)} pb, spot $${nf(D.insumos.spot,2)}.</div></div>`);
+D.datos.forEach(d=>de.querySelector('tbody').appendChild($(`<tr><td>${d.serie}</td><td class="l" style="white-space:normal;color:var(--ink2)">${d.papel}</td><td>${d.ultima?fdate(d.ultima):'—'}</td><td>${d.atraso??'—'}</td><td><span class="badge ${d.estado==='ok'?'b-ok':d.estado==='falta'?'b-bad':'b-warn'}">${d.estado==='ok'?'al día':d.estado}</span></td></tr>`)));
+dh.appendChild(de);
+const hu = $(`<div class="panel"><h2>Huella del código<span class="sub">versión con que se emitió esta señal</span></h2>
+  <div class="kv" style="margin-top:0"><div><div class="k">Huella (SHA-256)</div><div class="v mono" style="font-size:15px">${S.huella_codigo}</div></div>
+  <div><div class="k">Congelamiento</div><div class="v" style="font-size:15px">${fdate(M.congelamiento)}</div></div>
+  <div><div class="k">Monitoreo</div><div class="v" style="font-size:15px">${fdate(M.inicio_monitoreo).replace(/ \d{4}$/,'')} – ${fdate(M.fin_monitoreo)}</div></div></div>
+  <div class="scroll" style="margin-top:12px"><table><thead><tr><th>Archivo</th><th class="l">Última actualización</th></tr></thead><tbody></tbody></table></div>
+  <div class="note">${M.modelo}. Variables: ${M.variables.join(', ')}. La huella cambia si cambia cualquier archivo de src/ o run_daily.py: si difiere de la del registro, la señal se emitió con otra versión.</div></div>`);
+M.sellos.forEach(s=>hu.querySelector('tbody').appendChild($(`<tr><td class="mono">${s.archivo}</td><td class="l" style="white-space:normal;color:var(--ink2)">${s.sello}</td></tr>`)));
+dh.appendChild(hu);
+app.appendChild(dh);
+app.appendChild($(`<footer>Tablero generado por run_daily.py a partir de la base del Laboratorio Bloomberg FEN. Solo usa información disponible al cierre de la fecha de decisión. No es una recomendación de inversión.</footer>`));
+
+// ---------- tema ----------
+document.getElementById('tema').onclick=()=>{
+  const r=document.documentElement, oscuro = r.dataset.theme ? r.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = oscuro?'light':'dark'; try{localStorage.setItem('tema',r.dataset.theme);}catch(e){}
+  drawSeg();
+};
+try{const t=localStorage.getItem('tema'); if(t){document.documentElement.dataset.theme=t; drawSeg();}}catch(e){}
+
+// ---------- gráficos (SVG sin librerías) ----------
+function nice(lo,hi,n){ const span=hi-lo||1, step0=span/n, p=Math.pow(10,Math.floor(Math.log10(step0))), e=step0/p;
+  const step=(e<1.5?1:e<3?2:e<7?5:10)*p; const out=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(10)); return out; }
+function xticks(fechas,W){ const n=fechas.length, want=Math.max(2,Math.floor(W/110)); const span=(new Date(fechas[n-1])-new Date(fechas[0]))/864e5;
+  const idx=[]; let last='';
+  for(let i=0;i<n;i++){ const f=fechas[i]; const key = span>900? f.slice(0,4) : span>120 ? f.slice(0,7) : f; if(key!==last){ idx.push(i); last=key; } }
+  const stepI=Math.ceil(idx.length/want); return idx.filter((_,j)=>j%stepI===0).map(i=>[i, span>900? fechas[i].slice(0,4) : span>120 ? MES[+fechas[i].slice(5,7)-1]+(fechas[i].slice(5,7)==='01'?' '+fechas[i].slice(2,4):'') : fdate(fechas[i]).replace(/ \d{4}$/,'')]); }
+function lineChart(el, fechas, series, o){
+  const W=Math.max(el.clientWidth,300), H=o.h, L=54, Rm=12, T=o.title?18:8, B=22, n=fechas.length;
+  let lo=Infinity, hi=-Infinity; series.forEach(s=>s.values.forEach(v=>{if(v!=null){lo=Math.min(lo,v);hi=Math.max(hi,v);}}));
+  if(o.zero){lo=Math.min(lo,0);hi=Math.max(hi,0);} if(o.ref!=null){lo=Math.min(lo,o.ref);hi=Math.max(hi,o.ref);}
+  const pad=(hi-lo)*0.06||1; lo-=pad; hi+=pad;
+  const X=i=> L+(n<=1?0:i/(n-1))*(W-L-Rm), Y=v=> T+(1-(v-lo)/(hi-lo))*(H-T-B);
+  let g=`<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
+  if(o.title) g+=`<text x="${L}" y="11" style="fill:var(--ink3);font-size:11px">${o.title}</text>`;
+  g+=`<g class="axis grid">`+nice(lo,hi,5).map(v=>`<line x1="${L}" x2="${W-Rm}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end">${nf(v, Math.abs(hi-lo)<4?1:0)}</text>`).join('')+`</g>`;
+  if(o.zero) g+=`<line x1="${L}" x2="${W-Rm}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink3)" stroke-width="1"/>`;
+  if(o.ref!=null) g+=`<line x1="${L}" x2="${W-Rm}" y1="${Y(o.ref)}" y2="${Y(o.ref)}" stroke="var(--ink3)" stroke-dasharray="3 3"/>`;
+  g+=`<g class="axis">`+xticks(fechas,W).map(([i,t])=>`<text x="${X(i)}" y="${H-5}" text-anchor="middle">${t}</text>`).join('')+`</g>`;
+  [...series].sort((a,b)=>(a.key==='modelo')-(b.key==='modelo')).forEach(s=>{
+    let d='', pen=false; s.values.forEach((v,i)=>{ if(v==null){pen=false;return;} d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1); pen=true; });
+    if(n===1){ d=`M${X(0)-3} ${Y(s.values[0])}L${X(0)+3} ${Y(s.values[0])}`; }
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width}" stroke-linejoin="round"/>`;
+  });
+  g+=`<line class="cross" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="var(--ink3)" style="display:none"/><g class="pts"></g>`;
+  g+=`<rect x="${L}" y="${T}" width="${W-L-Rm}" height="${H-T-B}" fill="transparent"/></svg><div class="tip"></div>`;
+  el.innerHTML=g;
+  const svg=el.querySelector('svg'), tip=el.querySelector('.tip'), cross=el.querySelector('.cross'), pts=el.querySelector('.pts');
+  const move=ev=>{ const r=svg.getBoundingClientRect(); const px=(ev.clientX-r.left)*W/r.width;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-L)/(W-L-Rm)*(n-1)))); const x=X(i);
+    cross.setAttribute('x1',x);cross.setAttribute('x2',x);cross.style.display='';
+    pts.innerHTML=series.map(s=>s.values[i]==null?'':`<circle cx="${x}" cy="${Y(s.values[i])}" r="3" fill="${s.color}"/>`).join('');
+    tip.innerHTML=`<b>${fdate(fechas[i])}</b>`+series.map(s=>`<div class="row"><span><span class="dot" style="background:${s.color}"></span>${s.label}</span><b>${o.fmt(s.values[i])}</b></div>`).join('')+(o.extra?o.extra(i):'');
+    tip.style.display='block'; const tw=tip.offsetWidth; let left=x*r.width/W+14; if(left+tw>r.width) left=x*r.width/W-tw-14; tip.style.left=Math.max(0,left)+'px'; tip.style.top='6px'; };
+  svg.addEventListener('mousemove',move); svg.addEventListener('mouseleave',()=>{tip.style.display='none';cross.style.display='none';pts.innerHTML='';});
+}
+function expoStrip(el, fechas, ks){
+  const W=Math.max(el.clientWidth,300), H=72, L=54, Rm=12, n=fechas.length, mid=16+(H-16)/2, sc=((H-16)/2-3)/3;
+  const bw=Math.max((W-L-Rm)/n,0.6), X=i=>L+i*(W-L-Rm)/n;
+  let g=`<svg viewBox="0 0 ${W} ${H}" height="${H}"><text x="${L-6}" y="${mid-sc*3+8}" text-anchor="end" style="fill:var(--ink3);font-size:10px">+3</text><text x="${L-6}" y="${mid+4}" text-anchor="end" style="fill:var(--ink3);font-size:10px">0</text><text x="${L-6}" y="${mid+sc*3}" text-anchor="end" style="fill:var(--ink3);font-size:10px">−3</text>`;
+  g+=`<line x1="${L}" x2="${W-Rm}" y1="${mid}" y2="${mid}" stroke="var(--line)"/>`;
+  ks.forEach((k,i)=>{ if(!k) return; const h=Math.abs(k)*sc; g+=`<rect x="${X(i).toFixed(2)}" y="${k>0?mid-h:mid}" width="${(bw+0.15).toFixed(2)}" height="${h}" fill="var(${k>0?'--largo':'--corto'})" opacity=".8"/>`; });
+  g+=`<text x="${W-Rm}" y="10" text-anchor="end" style="fill:var(--ink3);font-size:11px">Exposición del modelo (compra USD arriba, vende abajo)</text></svg>`;
+  el.innerHTML=g;
+}
+function priceChart(el, w){
+  const f=w.fechas, y=w.spot, ks=w.k, n=f.length;
+  const W=Math.max(el.clientWidth,300), H=230, L=54, Rm=12, T=18, B=22;
+  let lo=Math.min(...y.filter(v=>v!=null)), hi=Math.max(...y.filter(v=>v!=null)); const pad=(hi-lo)*0.08||1; lo-=pad; hi+=pad;
+  const X=i=> L+(n<=1?0:i/(n-1))*(W-L-Rm), Y=v=> T+(1-(v-lo)/(hi-lo))*(H-T-B);
+  let g=`<svg viewBox="0 0 ${W} ${H}" height="${H}"><text x="${L}" y="11" style="fill:var(--ink3);font-size:11px">USD/CLP en pesos (cierre) y operaciones del modelo</text>`;
+  g+=`<g class="axis grid">`+nice(lo,hi,4).map(v=>`<line x1="${L}" x2="${W-Rm}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end">$${nf(v,0)}</text>`).join('')+`</g>`;
+  g+=`<g class="axis">`+xticks(f,W).map(([i,t])=>`<text x="${X(i)}" y="${H-5}" text-anchor="middle">${t}</text>`).join('')+`</g>`;
+  let d=''; y.forEach((v,i)=>{ if(v!=null) d+=(d?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1); });
+  g+=`<path d="${d}" fill="none" stroke="var(--ink3)" stroke-width="1.2" opacity=".7"/>`;
+  for(let i=0;i<n-1;i++){ if(!ks[i]||y[i]==null||y[i+1]==null) continue;
+    g+=`<line x1="${X(i)}" y1="${Y(y[i])}" x2="${X(i+1)}" y2="${Y(y[i+1])}" stroke="var(${ks[i]>0?'--largo':'--corto'})" stroke-width="2.6" stroke-linecap="round"/>`; }
+  for(let i=0;i<n;i++){ const prev=i? ks[i-1] : w.k_antes; const c=ks[i]-prev; if(!c||y[i]==null) continue;
+    const x=X(i), yy=Y(y[i]); const up=c>0; const s=6;
+    g+= up ? `<path d="M${x} ${yy+3}l${-s} ${s*1.6}h${2*s}z" fill="var(--largo)" stroke="var(--panel)" stroke-width="1"/>`
+           : `<path d="M${x} ${yy-3}l${-s} ${-s*1.6}h${2*s}z" fill="var(--corto)" stroke="var(--panel)" stroke-width="1"/>`; }
+  g+=`<line class="cross" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="var(--ink3)" style="display:none"/><rect x="${L}" y="${T}" width="${W-L-Rm}" height="${H-T-B}" fill="transparent"/></svg><div class="tip"></div>`;
+  el.innerHTML=g;
+  const svg=el.querySelector('svg'), tip=el.querySelector('.tip'), cross=el.querySelector('.cross');
+  svg.addEventListener('mousemove',ev=>{ const r=svg.getBoundingClientRect(); const px=(ev.clientX-r.left)*W/r.width;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-L)/(W-L-Rm)*(n-1)))); const x=X(i); cross.setAttribute('x1',x);cross.setAttribute('x2',x);cross.style.display='';
+    const prev=i? ks[i-1] : w.k_antes; const c=ks[i]-prev;
+    tip.innerHTML=`<b>${fdate(f[i])}</b><div class="row"><span>Cierre</span><b>$${nf(y[i],2)}</b></div><div class="row"><span>Exposición para el día siguiente</span><b class="${kcls(ks[i])}">${kfmt(ks[i])}</b></div>`+(c?`<div class="row"><span>${c>0?'Compra':'Venta'}</span><span>${Math.abs(c)} unidad(es), de ${kfmt(prev)} a ${kfmt(ks[i])}</span></div>`:'');
+    tip.style.display='block'; const tw=tip.offsetWidth; let left=x*r.width/W+14; if(left+tw>r.width) left=x*r.width/W-tw-14; tip.style.left=Math.max(0,left)+'px'; tip.style.top='6px'; });
+  svg.addEventListener('mouseleave',()=>{tip.style.display='none';cross.style.display='none';});
+}
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(drawSeg,150);});
+})();
+</script>
+</body>
+</html>

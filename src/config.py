@@ -3,7 +3,7 @@
 No modificar después de ver resultados: cualquier cambio debe anotarse en
 el registro de experimentos (reports/registro_experimentos.csv).
 """
-# Última actualización: 2026-10-21 21:54 (hora de Chile) — E13 prerregistrado (perfiles × ejecución); costo de 2 pb rotulado como supuesto
+# Última actualización: 2026-10-25 20:16 (hora de Chile) — fechas del monitoreo (INICIO_MONITOREO, FIN_MONITOREO) para el tablero
 from pathlib import Path
 
 # Rutas (relativas a la raíz del proyecto)
@@ -25,6 +25,8 @@ INICIO_OOS = 2010              # primer año con predicciones fuera de muestra (
 VALIDACION = (2020, 2023)      # tramo de validación
 FIN_EXPLORACION = "2023-12-31" # NO usar datos posteriores hasta congelar el modelo (8-nov)
 FECHA_CONGELAMIENTO = "2026-11-08"  # run_daily.py no acepta fechas > FIN_EXPLORACION antes de este día
+INICIO_MONITOREO = "2026-11-13"    # primer día del monitoreo en vivo (el tablero mide el seguimiento desde aquí)
+FIN_MONITOREO = "2026-12-01"       # último día del monitoreo en vivo
 
 # Variables
 VOL_VENTANA = 250              # días para normalizar retornos por su volatilidad pasada
