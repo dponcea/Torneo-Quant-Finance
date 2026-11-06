@@ -6,7 +6,8 @@ md, code = nbf.v4.new_markdown_cell, nbf.v4.new_code_cell
 nb.cells = [
     md("# 01 · Modelo núcleo: escalera M0 → M1 → M2\n\n"
        "Especificación prerregistrada el 13-oct-2026 (ver `src/config.py`). "
-       "**Solo datos hasta 2023-12-31**: el tramo de prueba no se toca hasta congelar el modelo el 8-nov.\n\n"
+       "**Solo datos hasta 2023-12-31.** El modelo se congeló el 6-nov-2026 (commit `74e9896`, etiqueta `v0.9-congelado`); "
+       "el tramo de prueba 2024–2026 se evaluó una sola vez con `prueba.py` (resultados en `reports/prueba/`).\n\n"
        "- M0: solo constante (benchmark ingenuo)\n- M1: + NY y r_CLP\n- M2: + carry, riesgo (EM-VXY) y carry × riesgo\n\n"
        "Cada modelo se estima con ventana expansiva (desde 2004) y móvil (1.250 jornadas); el final es el promedio, "
        "calibrado con Platt anual sobre predicciones fuera de muestra."),
@@ -14,7 +15,7 @@ nb.cells = [
          "import numpy as np, pandas as pd, matplotlib.pyplot as plt\n"
          "from src import config as C, datos, modelo, evaluacion as ev, figuras\n"
          "pd.set_option('display.width', 200); pd.set_option('display.max_columns', 30)"),
-    md("## 0. Versión\n\n**Última actualización del notebook: 2026-11-06 17:46 (hora de Chile).** "
+    md("## 0. Versión\n\n**Última actualización del notebook: 2026-11-06 18:54 (hora de Chile).** "
        "La celda siguiente muestra la fecha de modificación de cada archivo en tu PC y su sello de versión, "
        "para verificar que tienes la última versión (compárala con `CHANGELOG.md`)."),
     code("import datetime as _dt\nraiz = pathlib.Path.cwd().parent\nfilas = []\n"
@@ -210,7 +211,7 @@ nb.cells = [
        "Costo en pesos por dólar comprado o vendido, según la experiencia profesional de uno de los autores en carteras discrecionales "
        "de alto patrimonio: **institucional 0,5 CLP**, **retail 2 CLP**. El costo diario en fracción es pesos / tipo de cambio del día "
        "(por eso es mayor en pb cuando el dólar estaba más barato). Cada perfil usa la regla de Kelly con su propio costo ('regla propia'); "
-       "como comparación, se cobran esos costos a las posiciones decididas con 2 pb. Prerregistrado para la corrida del 8-nov."),
+       "como comparación, se cobran esos costos a las posiciones decididas con 2 pb. Prerregistrado para la corrida única del tramo de prueba (hecha el 6-nov)."),
     code("cols_p = ['Ret. anual neto %', 'Vol. anual %', 'Sharpe', 'Máx. drawdown %', '% días en 0', 'Costos / PnL bruto %', 'Costo medio (pb)']\n"
          "for a, b in [('2011', '2019'), ('2020', '2023')]:\n"
          "    vv = res[a:b].dropna(subset=['y']); t7 = T.reindex(vv.index)\n"
@@ -220,7 +221,7 @@ nb.cells = [
        "prácticamente no opera (y si operara con las posiciones del torneo perdería). Con costos altos, la regla que conoce su costo rinde menos que "
        "mantener las posiciones de 2 pb en 2020–2023: al operar menos pierde días buenos, porque la ventaja es de alta frecuencia. "
        "Parte de esa diferencia viene de una limitación declarada de la regla: cobra el costo completo de un cambio contra la ganancia de un solo día (auditoría A5)."),
-    md("### 12b. E13: perfiles × ejecución (prerregistrado el 21-oct para la corrida del 8-nov)\n\n"
+    md("### 12b. E13: perfiles × ejecución (prerregistrado el 21-oct para la corrida única del tramo de prueba)\n\n"
        "Cambio de **reporte**, no de modelo: las mismas posiciones de E12 se liquidan con la convención del torneo (cierre a cierre) "
        "y con la ejecución disponible para quien decide después del cierre de Nueva York (apertura a apertura). "
        "En el tramo de prueba se reportará esta misma tabla, tal como salga (`ev.perfiles_por_ejecucion`, `C.EJECUCIONES_E13`)."),
@@ -260,7 +261,7 @@ nb.cells = [
          "figuras.estilo_paper()\n"
          "import matplotlib.pyplot as _plt\n"
          "_plt.rcParams['figure.dpi'] = 110"),
-    md("## 15. Decisiones (13, 20 y 21-oct)\n\n- **Modelo operativo: M1** (regla de la escalera: M2 no supera a M1 con Clark-West). M2 se reporta como especificación prerregistrada descartada.\n- **Regla oficial: Kelly discreto por utilidad**, c = ¼ (robustez c = ⅕).\n- **20-oct:** resultado oficial con la convención del torneo; ejecución realista reportada con la misma prominencia (sección 8).\n- **20-oct (E08):** costo de equilibrio ~9–13 pb por unidad; el costo base de 2 pb se mantiene (nivel institucional; en retail solo un CFD se acerca).\n- **20-oct (E09):** diseño de la evaluación formal fijado antes de verla (sección 10); estadístico principal = diferencia de retorno neto.\n- **20-oct (E10):** M1 + cobre COMEX prerregistrado y descartado (CW p = 0,55). LightGBM y momentum descartados por diseño. **M1 queda como modelo final candidato para el 1-nov.**\n- **21-oct (E12):** dos perfiles de costo prerregistrados para la corrida del 8-nov: institucional (0,5 CLP) y retail (2 CLP); el resultado oficial sigue siendo la convención del torneo (2 pb).\n- **21-oct (auditoría, E13):** se prerregistra el reporte de los perfiles con ambas ejecuciones (cierre a cierre y apertura a apertura); se corrige el carry de la ejecución a la apertura (desfasado un día); la descomposición por tramos cobra los costos una sola vez; el DSR se reporta con N = 48, 100 y 200. La regla miope de costos (A5) queda como limitación declarada.\n- Ver `reports/registro_experimentos.csv` y `CHANGELOG.md`."),
+    md("## 15. Decisiones (13, 20 y 21-oct; 6-nov)\n\n- **Modelo operativo: M1** (regla de la escalera: M2 no supera a M1 con Clark-West). M2 se reporta como especificación prerregistrada descartada.\n- **Regla oficial: Kelly discreto por utilidad**, c = ¼ (robustez c = ⅕).\n- **20-oct:** resultado oficial con la convención del torneo; ejecución realista reportada con la misma prominencia (sección 8).\n- **20-oct (E08):** costo de equilibrio ~9–13 pb por unidad; el costo base de 2 pb se mantiene (nivel institucional; en retail solo un CFD se acerca).\n- **20-oct (E09):** diseño de la evaluación formal fijado antes de verla (sección 10); estadístico principal = diferencia de retorno neto.\n- **20-oct (E10):** M1 + cobre COMEX prerregistrado y descartado (CW p = 0,55). LightGBM y momentum descartados por diseño. **M1 queda como modelo final candidato para el 1-nov.**\n- **21-oct (E12):** dos perfiles de costo prerregistrados para la corrida del 8-nov: institucional (0,5 CLP) y retail (2 CLP); el resultado oficial sigue siendo la convención del torneo (2 pb).\n- **21-oct (auditoría, E13):** se prerregistra el reporte de los perfiles con ambas ejecuciones (cierre a cierre y apertura a apertura); se corrige el carry de la ejecución a la apertura (desfasado un día); la descomposición por tramos cobra los costos una sola vez; el DSR se reporta con N = 48, 100 y 200. La regla miope de costos (A5) queda como limitación declarada.\n- **6-nov (mentoría 1 y base nueva):** la base se lee por su nombre exacto (`data/base_usdclp_actualizada.xlsx`); historia hasta 2023 idéntica a la original (huella de datos `d6ae3102ed`). Se adopta el supuesto de cierre común indicado por el laboratorio.\n- **6-nov (congelamiento, E14 y E15):** congelamiento adelantado; se prerregistran la corrida única (`prueba.py`, con lectura de la convicción) y la robustez a la muestra de entrenamiento (E15: entrenar desde 2013 ya daba −0,2 % en validación).\n- **6-nov (prueba 2024–2026):** la estrategia pierde 5,1 % anual (Sharpe −0,54) y la señal no anticipa la dirección (Clark-West p = 0,52): la correlación de la señal con el día siguiente cayó de 0,16 (2004–12) a −0,02 (2024–26). **El modelo no se modifica**: cambiarlo mirando la prueba sería sobreajuste.\n- Ver `reports/registro_experimentos.csv` y `CHANGELOG.md`."),
 ]
 nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
 nbf.write(nb, "notebooks/01_modelo_nucleo.ipynb")

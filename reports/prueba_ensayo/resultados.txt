@@ -2,7 +2,7 @@
 ====================================================================================================
 ENSAYO sobre la validación · 2020–2023
 ====================================================================================================
-Generado: 2026-11-06 17:59 · huella del código ad6ebed4bb · base base_usdclp_actualizada.xlsx (huella a198a23573, último cierre USD/CLP 2026-11-06)
+Generado: 2026-11-06 18:40 · huella del código ad6ebed4bb · base base_usdclp_actualizada.xlsx (huella a198a23573, último cierre USD/CLP 2026-11-06)
 Modelo congelado: M1 = logit(señal NY, r_CLP), walk-forward anual (expansiva + móvil 1.250, embargo 5), Platt anual; Kelly discreto por utilidad c = 1/4; costo 2 pb por unidad de cambio.
 Jornadas evaluadas: 1010 (2020-01-01 a 2023-12-28)
 

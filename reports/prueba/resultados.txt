@@ -1,0 +1,172 @@
+
+====================================================================================================
+CORRIDA ÚNICA DEL TRAMO DE PRUEBA · 2024–2026
+====================================================================================================
+Generado: 2026-11-06 18:05 · huella del código ad6ebed4bb · base base_usdclp_actualizada.xlsx (huella a198a23573, último cierre USD/CLP 2026-11-06)
+Modelo congelado: M1 = logit(señal NY, r_CLP), walk-forward anual (expansiva + móvil 1.250, embargo 5), Platt anual; Kelly discreto por utilidad c = 1/4; costo 2 pb por unidad de cambio.
+Jornadas evaluadas: 716 (2024-01-02 a 2026-11-05)
+
+====================================================================================================
+1. Pronóstico (Brier, log-loss) y tests
+====================================================================================================
+           Brier  Log-loss  Acierto  p media  p desv.
+M0_exp    0.2503    0.6938   0.4958   0.4889   0.0012
+M0_mov    0.2504    0.6938   0.4958   0.4950   0.0052
+M0_prom   0.2503    0.6938   0.4958   0.4919   0.0030
+M0_cal    0.2503    0.6938   0.4958   0.4919   0.0030
+M1_exp    0.2517    0.6965   0.4916   0.4870   0.0339
+M1_mov    0.2510    0.6951   0.4958   0.4945   0.0264
+M1_prom   0.2513    0.6957   0.4916   0.4908   0.0300
+M1_cal    0.2509    0.6950   0.4874   0.4967   0.0237
+M2_exp    0.2517    0.6966   0.4846   0.4985   0.0348
+M2_mov    0.2548    0.7028   0.4651   0.5172   0.0455
+M2_prom   0.2529    0.6989   0.4721   0.5079   0.0366
+M2_cal    0.2509    0.6950   0.4651   0.4947   0.0125
+M1C_exp   0.2517    0.6965   0.4888   0.4870   0.0340
+M1C_mov   0.2509    0.6950   0.4916   0.4942   0.0296
+M1C_prom  0.2512    0.6956   0.4804   0.4906   0.0308
+M1C_cal   0.2507    0.6946   0.4832   0.4961   0.0205
+                    CW t   CW p   DM t   DM p
+comparación                                  
+M1_cal vs M0_cal  -0.044  0.518 -0.689  0.754
+M2_cal vs M1_cal   0.462  0.322  0.069  0.472
+M1C_cal vs M1_cal  1.324  0.093  1.160  0.123
+M2_cal vs M0_cal  -1.040  0.851 -1.366  0.914
+Acierto direccional M1: 0.487 (bajo independencia 0.499; siempre lo más frecuente 0.504); Pesaran-Timmermann -0.64, p = 0.740
+
+====================================================================================================
+2. Valor económico (costo 2 pb, carry incluido; regla oficial: M1 + Kelly por utilidad, c = 1/4)
+====================================================================================================
+                         Ret. anual neto %  Ret. anual bruto %  Vol. anual %  Sharpe  Máx. drawdown %  % días en 0  % días en ±1  % días en ±3  Acierto días activos  Acierto días ±3 (DA@3x)  Costos / PnL bruto %
+M1 c=0.25                            -5.14               -3.17          9.58   -0.54           -21.39        53.91         44.27          1.82                  0.48                     0.54                   NaN
+M1 c=0.2                             -5.55               -3.88          8.64   -0.64           -23.31        61.73         37.29          0.98                  0.46                     0.71                   NaN
+Señal M1, tamaño fijo 1              -8.89               -3.99         12.36   -0.72           -35.41         0.00        100.00          0.00                  0.49                      NaN                   NaN
+Comprar siempre (+1)                  2.65                2.66         12.35    0.21           -18.57         0.00        100.00          0.00                  0.50                      NaN                  0.26
+Comprar siempre (+3)                  7.96                7.98         37.06    0.21           -55.72         0.00          0.00        100.00                  0.50                     0.50                  0.26
+No operar (0)                         0.00                0.00          0.00     NaN             0.00       100.00          0.00          0.00                   NaN                      NaN                   NaN
+Resultado acumulado neto de la estrategia oficial: -14.61 % (comprar siempre: 7.54 %)
+
+====================================================================================================
+3. Resultado por año (estrategia oficial)
+====================================================================================================
+       Retorno neto %  Sharpe  % en 0  % en ±3  Comprar siempre %  Jornadas
+fecha                                                                      
+2024             0.92    0.10   56.80     2.00              11.62       250
+2025            -4.43   -0.49   61.60     1.60             -11.00       250
+2026           -11.09   -1.26   41.67     1.85               6.92       216
+
+====================================================================================================
+4. Evaluación formal frente a las referencias (E09): bootstrap estacionario 10.000, Holm, DSR
+====================================================================================================
+Bloque medio 10 días:
+                         Dif. retorno anual %  IC 95% inf.  IC 95% sup.  p bootstrap (retorno)  Dif. Sharpe  p bootstrap (Sharpe)  DM (HLN)   p DM  p Holm (retorno)
+No operar (0)                          -5.142      -14.840        4.299                  0.847       -0.536                 0.840    -0.996  0.840               1.0
+Comprar siempre (+1)                   -7.796      -25.554        9.984                  0.806       -0.751                 0.819    -0.833  0.797               1.0
+Comprar siempre (+3)                  -13.103      -55.169       28.625                  0.737       -0.751                 0.819    -0.593  0.723               1.0
+Señal M1, tamaño fijo 1                 3.751       -8.489       15.551                  0.269        0.183                 0.364     0.614  0.270               1.0
+Robustez al largo de bloque (p bootstrap de la diferencia de retorno):
+                         bloque 10  bloque 5  bloque 20
+No operar (0)                0.847     0.842      0.862
+Comprar siempre (+1)         0.806     0.796      0.812
+Comprar siempre (+3)         0.737     0.723      0.741
+Señal M1, tamaño fijo 1      0.269     0.275      0.279
+Sharpe -0.54 | lugar entre los 48 ensayos: 36.º
+   N = 48: umbral SR0 = 0.51 | Sharpe deflactado (prob.) = 0.040
+   N = 100: umbral SR0 = 0.57 | Sharpe deflactado (prob.) = 0.032
+   N = 200: umbral SR0 = 0.62 | Sharpe deflactado (prob.) = 0.026
+
+====================================================================================================
+5. Ejecución y tramos del retorno (E07)
+====================================================================================================
+                                    Ret. anual neto %  Sharpe  Máx. drawdown %  Acierto días activos
+Torneo: cierre→cierre                           -5.14   -0.54           -21.39                  0.48
+Realista: apertura→apertura                     -5.52   -0.54           -20.96                  0.45
+Solo sesión t+1: apertura→cierre               -10.12   -1.22           -30.07                  0.46
+Solo tramo nocturno (no transable)               2.88    0.49            -7.90                  0.51
+Descomposición que suma (% anual; costos cobrados una vez):
+           Tramo nocturno (bruto)  Sesión (bruto)  Retorno del tipo de cambio  Carry recibido  Costos  Resultado neto  Posición media
+2024–2026                    4.85           -8.15                        -3.3            0.13   -1.97           -5.14           -0.15
+
+====================================================================================================
+6. Costos (E08): sensibilidad y costo de equilibrio. 8 pb ≈ spread de estrés de 1,5 CLP (mentoría 6-nov)
+====================================================================================================
+         Ret. anual neto %            Sharpe           
+regla                 fija reoptimiza   fija reoptimiza
+costo_pb                                               
+0                    -3.17       0.42  -0.33       0.03
+1                    -4.16      -3.43  -0.43      -0.27
+2                    -5.14      -5.14  -0.54      -0.54
+3                    -6.13      -8.45  -0.64      -0.87
+4                    -7.11      -5.95  -0.74      -0.63
+5                    -8.10      -4.61  -0.84      -0.47
+6                    -9.08      -0.27  -0.94      -0.03
+8                   -11.05      -2.30  -1.15      -0.22
+10                  -13.03       2.19  -1.35       0.25
+12                  -15.00       0.41  -1.55       0.05
+15                  -17.95       0.00  -1.84        NaN
+20                  -22.88       0.00  -2.31        NaN
+25                  -27.81       0.00  -2.77        NaN
+Costo por unidad de cambio que deja el retorno neto en 0:
+      c          ejecución  costo de equilibrio (pb)
+0  0.25      cierre→cierre                     -3.22
+1  0.25  apertura→apertura                     -3.61
+2  0.20      cierre→cierre                     -4.63
+3  0.20  apertura→apertura                     -6.96
+Tipo de cambio medio del tramo: 938 CLP/USD (1 CLP ≈ 10.7 pb)
+
+====================================================================================================
+7. Perfiles de inversionista (E12) y perfiles × ejecución (E13)
+====================================================================================================
+                                                Ret. anual neto %  Vol. anual %  Sharpe  Máx. drawdown %  % días en 0  Costos / PnL bruto %  Costo medio (pb)
+Torneo (2 pb)                                               -5.14          9.58   -0.54           -21.39        53.91                   NaN               NaN
+Institucional (0.5 CLP), regla propia                       -2.65          9.03   -0.29           -13.70        69.41                   NaN              5.34
+Institucional (0.5 CLP), posiciones del torneo              -8.40          9.61   -0.87           -27.78        53.91                   NaN               NaN
+Retail (2.0 CLP), regla propia                               0.00          0.00     NaN             0.00       100.00                   NaN             21.35
+Retail (2.0 CLP), posiciones del torneo                    -24.10          9.92   -2.43           -68.70        53.91                   NaN               NaN
+                                                                         Ret. anual neto %  Sharpe  Máx. drawdown %  % días en 0
+ejecución                perfil                                                                                                 
+cierre a cierre (torneo) Torneo (2 pb)                                               -5.14   -0.54           -21.39        53.91
+                         Institucional (0.5 CLP), regla propia                       -2.65   -0.29           -13.70        69.41
+                         Institucional (0.5 CLP), posiciones del torneo              -8.40   -0.87           -27.78        53.91
+                         Retail (2.0 CLP), regla propia                               0.00     NaN             0.00       100.00
+                         Retail (2.0 CLP), posiciones del torneo                    -24.10   -2.43           -68.70        53.91
+apertura a apertura      Torneo (2 pb)                                               -5.52   -0.54           -20.96        53.91
+                         Institucional (0.5 CLP), regla propia                       -6.69   -0.66           -22.19        69.41
+                         Institucional (0.5 CLP), posiciones del torneo              -8.79   -0.85           -26.19        53.91
+                         Retail (2.0 CLP), regla propia                               0.00     NaN             0.00       100.00
+                         Retail (2.0 CLP), posiciones del torneo                    -24.49   -2.30           -69.33        53.91
+
+====================================================================================================
+8. Lectura de la convicción (exigida por las bases): jornadas de máxima exposición (±3) y de abstención (0)
+====================================================================================================
+              Jornadas  % de jornadas  Convicción media max(p, 1-p)  Acierto de dirección  Acierto de la señal (signo de p-0,5)  PnL bruto %  PnL neto %  |Retorno en exceso| medio (pb)
+|exposición|                                                                                                                                                                            
+0.0                386         53.911                         0.512                   NaN                                 0.505        0.000      -1.660                          56.840
+1.0                317         44.274                         0.523                 0.473                                 0.464      -12.391     -15.591                          63.883
+3.0                 13          1.816                         0.574                 0.538                                 0.538        3.382       2.642                          49.111
+Abstención: en las 386 jornadas en 0, seguir el signo de la señal con tamaño 1 habría dado +2.49 % en bruto (antes de los costos de entrar y salir): es lo que la regla dejó pasar por considerar que la ventaja esperada no cubría el riesgo y el costo.
+Jornadas en ±3: 13; las 5 mejores y las 5 peores (lista completa en jornadas_max_exposicion.csv):
+            p calibrada  exposición  señal NY  retorno en exceso t+1 (pb)  PnL neto (pb)
+fecha                                                                                   
+2025-04-07        0.547         3.0     1.369                     110.929        332.788
+2025-04-04        0.619         3.0     3.562                     105.156        307.469
+2024-05-02        0.440        -3.0    -1.607                     -72.250        208.751
+2024-08-23        0.418        -3.0    -2.148                     -34.318         94.953
+2025-03-05        0.423        -3.0    -2.274                     -22.246         62.737
+2025-04-09        0.392        -3.0    -3.206                      67.635       -210.906
+2026-01-27        0.431        -3.0    -1.988                      67.010       -205.030
+2026-07-30        0.439        -3.0    -1.770                      57.822       -179.466
+2026-10-26        0.556         3.0     1.849                     -55.079       -171.237
+2024-12-20        0.443        -3.0    -1.408                      13.058        -45.173
+
+====================================================================================================
+9. Robustez a la muestra de entrenamiento (E15, sugerida en la mentoría del 6-nov para los huecos 2011-2012)
+====================================================================================================
+Mismo M1 y misma regla; solo cambia qué jornadas entran al entrenamiento. El modelo oficial no cambia con esto.
+                                               Jornadas  Brier  Ret. anual neto %  Sharpe  Máx. drawdown %  % jornadas con la misma exposición que el oficial  Corr. de p con el oficial
+Oficial (expansiva desde 2004, todo)              716.0  0.251             -5.142  -0.536          -21.394                                            100.000                      1.000
+Sin el tramo dañado (2011-11 a 2012-10 fuera)     716.0  0.251             -6.191  -0.666          -25.047                                             94.693                      1.000
+Expansiva desde 2008                              716.0  0.251             -4.041  -0.518          -19.594                                             69.413                      0.999
+Expansiva desde 2013 (después de los huecos)      716.0  0.251             -4.677  -0.546          -23.287                                             66.201                      0.991
+
+Figura: reports/figuras/fig5_curva_prueba.pdf

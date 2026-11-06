@@ -78,7 +78,7 @@
 \vspace{0.5cm}
 {\normalsize \autores\footnote{Facultad de Economía y Negocios, Universidad de Chile. Agradecemos al Laboratorio Bloomberg FEN y a Banco Itaú por la organización del torneo y la base de datos. Los errores son de nuestra exclusiva responsabilidad.}\par}
 \vspace{0.2cm}
-{\small \pendiente{fecha} 2026\par}
+{\small Noviembre de 2026\par}
 \end{center}
 \vspace{0.6cm}
 
@@ -87,7 +87,7 @@
 \small
 \begin{center}\textbf{\scshape Resumen}\end{center}
 \vspace{-0.2cm}
-\noindent ¿Es posible ganar dinero anticipando la dirección diaria del tipo de cambio USD/CLP? El mercado cambiario chileno cierra alrededor de las 13:30, entre tres y seis horas antes que Nueva York, y estudiamos si lo que ocurre en ese intervalo anticipa el movimiento del peso al día siguiente. Un logit con los retornos del peso mexicano, el rand, el real, el índice del dólar, el euro y el S\&P~500 observados al cierre de Nueva York, calibrado con Platt y traducido en exposiciones con un criterio de Kelly fraccional, anticipa la dirección del día siguiente mejor que un modelo sin información (Clark-West, \(p=0{,}029\)). No encontramos evidencia de que el diferencial de tasas, la volatilidad emergente o el cobre agreguen información. En 2020--2023, el tramo que usamos para elegir el modelo y la regla, la estrategia gana 12,1\% anual neto de carry y costos (Sharpe 0,92) con la convención del torneo, que acredita el retorno desde el cierre local, horas antes de conocer la señal. Si se ejecuta a la apertura siguiente gana 10,6\% (Sharpe 0,68); en 2011--2019 esas cifras son 16,5\% y $-13{,}4$\%. \pendiente{En el tramo de prueba (2024--2026), evaluado una sola vez, \ldots{} (corrida del 8 de noviembre).} La ventaja se concentra entre el cierre local y la apertura siguiente, cuando el mercado local no opera, y el costo de equilibrio es de 9 a 13 puntos base por unidad de exposición. La señal tiene valor para quien puede operar después del cierre local, por ejemplo en el mercado \emph{offshore} de forwards no entregables. En el mercado local, su valor capturable con costos institucionales es pequeño e incierto, y para un inversionista minorista es nulo.
+\noindent ¿Es posible ganar dinero anticipando la dirección diaria del tipo de cambio USD/CLP? El mercado cambiario chileno cierra alrededor de las 13:30, entre tres y seis horas antes que Nueva York, y estudiamos si lo que ocurre en ese intervalo anticipa el movimiento del peso al día siguiente. Un logit con los retornos del peso mexicano, el rand, el real, el índice del dólar, el euro y el S\&P~500 observados al cierre de Nueva York, calibrado con Platt y traducido en exposiciones con un criterio de Kelly fraccional, anticipa la dirección del día siguiente mejor que un modelo sin información (Clark-West, \(p=0{,}029\)). No encontramos evidencia de que el diferencial de tasas, la volatilidad emergente o el cobre agreguen información. En 2020--2023, el tramo que usamos para elegir el modelo y la regla, la estrategia gana 12,1\% anual neto de carry y costos (Sharpe 0,92) con la convención del torneo, que acredita el retorno desde el cierre local, horas antes de conocer la señal. Si se ejecuta a la apertura siguiente gana 10,6\% (Sharpe 0,68); en 2011--2019 esas cifras son 16,5\% y $-13{,}4$\%. En el tramo de prueba (2024--2026), evaluado una sola vez con el modelo congelado, la estrategia pierde 5,1\% anual neto (Sharpe $-0{,}54$) y la señal deja de anticipar la dirección (Clark-West, \(p=0{,}52\)). La causa es un deterioro gradual: la correlación de la señal con el retorno del día siguiente cae de 0,16 en 2004--2012 a 0,11 en 2013--2019, 0,05 en 2020--2023 y cero en la prueba, una fragilidad que nuestra prueba de robustez había advertido antes de la corrida. Concluimos que la asincronía de cierres fue una fuente real pero transitoria de predictibilidad, hoy agotada, y que su valor capturable en el mercado local, aun en su mejor momento, era pequeño frente a costos realistas.
 
 \vspace{0.4cm}
 \noindent\textbf{Palabras clave:} tipo de cambio, USD/CLP, predicción direccional, \emph{nonsynchronous trading}, calibración de probabilidades, criterio de Kelly.
@@ -109,7 +109,7 @@ Predecir el tipo de cambio es uno de los problemas más esquivos de la economía
 
 Este informe estudia el problema desde la perspectiva de quien debe tomar una posición cada día en el mercado cambiario chileno. Nuestra pregunta de investigación es la siguiente: \emph{¿es posible anticipar, fuera de muestra, la dirección diaria del tipo de cambio USD/CLP en exceso de carry, con la información disponible tras el cierre de Nueva York y antes de la apertura del mercado cambiario local, de modo que una regla de exposición basada en esos pronósticos genere un valor económico neto de costos superior al de las estrategias pasivas de referencia?}
 
-La pregunta tiene cuatro elementos que guían el diseño del estudio. Primero, el objeto de predicción es la \emph{dirección} del retorno en exceso de carry, no su nivel: una posición larga en dólares paga el diferencial de tasas entre Chile y Estados Unidos, por lo que un alza del tipo de cambio menor que ese diferencial no constituye una ganancia. Segundo, el horizonte es de un día. Tercero, la información admisible es la disponible tras el cierre de Nueva York del día \(t\), entre las 17:00 y las 19:00 hora de Chile según la época del año, y antes de la apertura local del día siguiente. El mercado cambiario local cierra antes, alrededor de las 13:00--13:30, así que esa información llega cuando el peso ya no se transa en el mercado formal. Esto obliga a distinguir a qué precio se ejecuta: la convención del torneo liquida desde el cierre local de \(t\), anterior a la decisión, mientras que un operador en Chile solo puede ejecutar a la apertura de \(t+1\). Reportamos ambas. \pendiente{confirmar con el laboratorio que el cierre de Nueva York de \(t\) cuenta como información ``hasta el cierre de la jornada previa'', como exigen las bases}. Cuarto, el criterio de éxito es la rentabilidad: la estrategia debe ganar más dinero que las alternativas pasivas de no operar, mantener una posición comprada en dólares y operar con exposición fija, una vez descontados el carry y los costos de transacción, y con significancia estadística.
+La pregunta tiene cuatro elementos que guían el diseño del estudio. Primero, el objeto de predicción es la \emph{dirección} del retorno en exceso de carry, no su nivel: una posición larga en dólares paga el diferencial de tasas entre Chile y Estados Unidos, por lo que un alza del tipo de cambio menor que ese diferencial no constituye una ganancia. Segundo, el horizonte es de un día. Tercero, la información admisible es la disponible tras el cierre de Nueva York del día \(t\), entre las 17:00 y las 19:00 hora de Chile según la época del año, y antes de la apertura local del día siguiente. El mercado cambiario local cierra antes, alrededor de las 13:00--13:30, así que esa información llega cuando el peso ya no se transa en el mercado formal. Esto obliga a distinguir a qué precio se ejecuta: la convención del torneo liquida desde el cierre local de \(t\), anterior a la decisión, mientras que un operador en Chile solo puede ejecutar a la apertura de \(t+1\). Reportamos ambas. En la mentoría del 6 de noviembre, el laboratorio indicó suponer que todas las series cierran el mismo día a la misma hora, lo que admite la señal de Nueva York bajo la convención del torneo; lo tratamos como un supuesto explícito y como la principal fuente de \emph{leakage} del estudio (Sección~\ref{sec:leakage}). Cuarto, el criterio de éxito es la rentabilidad: la estrategia debe ganar más dinero que las alternativas pasivas de no operar, mantener una posición comprada en dólares y operar con exposición fija, una vez descontados el carry y los costos de transacción, y con significancia estadística.
 
 El tercer elemento es la base de nuestra estrategia empírica. Cuando dos mercados cierran a horas distintas, la información que llega al mercado que cierra más tarde se incorpora al precio del que cierra antes recién en la jornada siguiente. Esto genera una correlación aparente entre retornos de días consecutivos \citep{scholes1977,lo1990}. El peso chileno es una moneda de commodity cuyo precio se mueve junto con otras monedas emergentes y con el dólar global \citep{chen2003,lustig2011}. Por eso, los movimientos que ocurren en Nueva York después del cierre local deberían anticipar parte del movimiento del USD/CLP del día siguiente.
 
@@ -122,7 +122,7 @@ A partir de la pregunta formulamos tres hipótesis, fijadas antes de examinar el
 
 Para contrastarlas estimamos una secuencia de modelos logit anidados con reestimación anual y sin información futura, calibramos las probabilidades con el método de \citet{platt1999} y las convertimos en exposiciones mediante una versión discreta y fraccional del criterio de \citet{kelly1956} que incorpora el costo de cambiar de posición. La evaluación separa la calidad del pronóstico, medida con los tests de \citet{clark2007}, \citet{diebold1995} y \citet{pesaran1992}, del valor económico, medido con un bootstrap estacionario \citep{politis1994} y el \emph{Deflated Sharpe Ratio} de \citet{bailey2014}, que corrige por el número de especificaciones probadas.
 
-\pendiente{Resultados principales en el tramo de prueba (corrida única del 8 de noviembre). En validación (2020--2023), el tramo con que elegimos el modelo y la regla, la señal de Nueva York mejora el pronóstico (Clark-West, $p=0{,}029$). No encontramos evidencia de que carry, riesgo o cobre agreguen información. La estrategia obtiene un Sharpe de 0,92 con la convención del torneo y de 0,68 con ejecución a la apertura, y supera con significancia a no operar, pero su ventaja frente a comprar siempre es marginal ($p\approx0{,}08$).}
+En validación (2020--2023), el tramo con que elegimos el modelo y la regla, la señal de Nueva York mejora el pronóstico (Clark-West, $p=0{,}029$), y no encontramos evidencia de que carry, riesgo o cobre agreguen información. La estrategia obtiene un Sharpe de 0,92 con la convención del torneo y de 0,68 con ejecución a la apertura, y supera con significancia a no operar, aunque su ventaja frente a comprar siempre es marginal ($p\approx0{,}08$). En el tramo de prueba, evaluado una sola vez, ninguna de las tres hipótesis se confirma: la señal no anticipa la dirección (Clark-West, $p=0{,}52$) y la estrategia pierde 5,1\% anual, sin diferencias significativas frente a las referencias. El deterioro de la señal explica el resultado y era visible desde antes (Sección~\ref{sec:prueba}).
 
 El estudio documenta además dos resultados que matizan la respuesta a la pregunta y que no formaban parte de las hipótesis. El primero es que la ventaja se concentra entre el cierre local de un día y la apertura del siguiente, cuando el mercado local no opera. Quien decide tras el cierre de Nueva York solo puede ejecutar a la apertura, y con esa ejecución el valor económico cae a 10,6\% anual en 2020--2023 y se vuelve negativo en 2011--2019. El segundo es que el punto de equilibrio está en 9--13 puntos base por unidad de cambio de exposición. Con los costos de un inversionista institucional, la estrategia gana poco y de manera estadísticamente indistinguible de cero; con los de un minorista, no gana.
 
@@ -191,7 +191,7 @@ La literatura deja cuatro lecciones para la pregunta de este estudio. Primero, s
 
 \subsection{Fuente y muestra}
 
-Usamos exclusivamente la base entregada por el Laboratorio Bloomberg FEN, con series diarias desde 1990 hasta el 6 de octubre de 2026. La muestra de estimación parte el 1 de enero de 2004, por razones que se explican en la auditoría (Sección~\ref{sec:auditoria}), y el calendario de jornadas es el del USD/CLP onshore. En total hay 5.628 jornadas entre enero de 2004 y octubre de 2026. La Tabla~\ref{tab:tramos} resume cómo se dividen.
+Usamos exclusivamente la base entregada por el Laboratorio Bloomberg FEN, con series diarias desde 1990 hasta el 6 de noviembre de 2026, en la versión actualizada que el laboratorio envió ese día (hasta 2023 es idéntica a la versión original; Apéndice~\ref{app:bitacora}). La muestra de estimación parte el 1 de enero de 2004, por razones que se explican en la auditoría (Sección~\ref{sec:auditoria}), y el calendario de jornadas es el del USD/CLP onshore. En total hay 5.650 jornadas entre enero de 2004 y el 6 de noviembre de 2026. La Tabla~\ref{tab:tramos} resume cómo se dividen.
 
 \begin{table}[htbp]\centering
 \caption{Tramos de la muestra}\label{tab:tramos}
@@ -203,7 +203,7 @@ Tramo & Período & Uso & Jornadas \\
 Estimación inicial & 2004--2009 & Solo estimación & 1.546 \\
 Fuera de muestra & 2010--2019 & Calibración de Platt y diagnóstico & 2.376 \\
 Validación & 2020--2023 & Selección de modelo y regla & 1.011 \\
-Prueba & ene.\ 2024 -- 6 oct.\ 2026 & Corrida única (8 de noviembre) & 695 \\
+Prueba & ene.\ 2024 -- 5 nov.\ 2026 & Corrida única (6 de noviembre) & 716 \\
 En vivo & 13 nov.\ -- 1 dic.\ 2026 & Monitoreo del torneo & --- \\
 \bottomrule
 \end{tabular}
@@ -414,11 +414,11 @@ con \(\gamma\approx0{,}5772\) la constante de Euler-Mascheroni y \(\widehat{V}[S
 
 \subsection{Potencia estadística}
 
-Conviene anticipar qué se puede esperar de los tests. Si la estrategia tiene un Sharpe anual verdadero de 0,9, cercano al observado en validación, el estadístico esperado en las 695 jornadas de prueba (2,76 años) es aproximadamente \(0{,}9\times\sqrt{2{,}76}\approx1{,}5\). Con un test de una cola al 5\%, cuyo valor crítico es 1,645, la probabilidad de rechazar la hipótesis nula es de solo 44\%. Dicho de otro modo, aun si la ventaja es real, es más probable no obtener significancia que obtenerla. \citet{gonzalez2026} enfrenta la misma limitación con una muestra de prueba casi dos veces más larga. Por eso reportamos los p-valores sin umbrales rígidos, junto con los intervalos de confianza y la magnitud económica de las diferencias.
+Conviene anticipar qué se puede esperar de los tests. Si la estrategia tiene un Sharpe anual verdadero de 0,9, cercano al observado en validación, el estadístico esperado en las 716 jornadas de prueba (2,84 años) es aproximadamente \(0{,}9\times\sqrt{2{,}84}\approx1{,}5\). Con un test de una cola al 5\%, cuyo valor crítico es 1,645, la probabilidad de rechazar la hipótesis nula es de solo 45\%. Dicho de otro modo, aun si la ventaja es real, es más probable no obtener significancia que obtenerla. \citet{gonzalez2026} enfrenta la misma limitación con una muestra de prueba casi dos veces más larga. Por eso reportamos los p-valores sin umbrales rígidos, junto con los intervalos de confianza y la magnitud económica de las diferencias.
 
 \subsection{Disciplina de la evaluación}
 
-El tramo de prueba se examina una sola vez, el 8 de noviembre de 2026, con el mismo código que produjo los resultados de validación y sin ningún cambio posterior. El resultado se reporta tal como salga. Ninguna decisión de este estudio, ni la especificación, ni la regla de exposición, ni los tests, puede revisarse después de esa corrida.
+El tramo de prueba se examina una sola vez, el 6 de noviembre de 2026 (fecha adelantada desde el 8 de noviembre), con el mismo código que produjo los resultados de validación y sin ningún cambio posterior. El resultado se reporta tal como salga. Ninguna decisión de este estudio, ni la especificación, ni la regla de exposición, ni los tests, puede revisarse después de esa corrida.
 
 \newpage
 % ---------- secciones/06_resultados ----------
@@ -601,8 +601,120 @@ Por último, el \emph{Deflated Sharpe Ratio} pone el Sharpe observado en perspec
 
 En síntesis, la validación respalda que la señal de Nueva York contiene información sobre la dirección del peso y que la estrategia gana dinero de manera significativa frente a no operar. La evidencia de que gana más que comprar dólares es económicamente grande, pero estadísticamente marginal, lo que es coherente con la baja potencia anticipada en la Sección~\ref{sec:evaluacion}. Como el tramo se usó para seleccionar, esta evidencia es de apoyo y no confirmatoria.
 
-\subsection{Prueba (2024 -- octubre 2026)}\label{sec:prueba}
-\pendiente{Corrida única del 8 de noviembre. Se reporta tal como salga, con las mismas tablas de esta sección.}
+\subsection{Prueba (2024 -- noviembre de 2026)}\label{sec:prueba}
+
+El tramo de prueba se examinó una sola vez, el 6 de noviembre de 2026 a las 18:05, con el código etiquetado como \texttt{v0.9-congelado} en el repositorio (commit \texttt{74e9896}) y la base que el laboratorio envió ese día. Incluye 716 jornadas, del 2 de enero de 2024 al 5 de noviembre de 2026. El análisis repite sin cambios el de la validación (\texttt{prueba.py}); antes de correrlo se agregaron solo dos reportes, la lectura de la convicción que piden las bases y una prueba de robustez a la muestra de entrenamiento (E14 y E15, Apéndice~\ref{app:registro}). El modelo no se modificó después de ver el resultado.
+
+\textbf{En el tramo de prueba la estrategia pierde dinero.} Gana $-5{,}1$\% anual neto de carry y costos, con un Sharpe de $-0{,}54$ y una pérdida máxima de 21\%; en el acumulado del período pierde 14,6\%, mientras comprar dólares gana 7,5\% (Tabla~\ref{tab:prueba}). El año 2024 termina levemente positivo (0,9\%), 2025 pierde 4,4\% y 2026 pierde 11,1\%. La señal tampoco anticipa la dirección: M1 no supera a M0 (Clark-West, \(p=0{,}52\)) y acierta el 48,7\% de los días, frente a 49,9\% bajo independencia (Pesaran-Timmermann, \(p=0{,}74\)). Por lo tanto, en este tramo no se confirma H1.
+
+\begin{table}[htbp]\centering\small
+\caption{Resultado en el tramo de prueba, 2024--2026}\label{tab:prueba}
+\begin{threeparttable}
+\begin{tabular}{l rrrr rr rr}
+\toprule
+Estrategia & Ret.\ neto & Vol. & Sharpe & Pérd.\ máx. & \% en 0 & \% en $\pm3$ & DA act. & DA@3x \\
+\midrule
+M1, $c=\tfrac14$ & $-5{,}14$ & 9,58 & $-0{,}54$ & $-21{,}39$ & 53,9 & 1,8 & 48 & 54 \\
+M1, $c=\tfrac15$ & $-5{,}55$ & 8,64 & $-0{,}64$ & $-23{,}31$ & 61,7 & 1,0 & 46 & 71 \\
+Señal con tamaño fijo & $-8{,}89$ & 12,36 & $-0{,}72$ & $-35{,}41$ & 0,0 & 0,0 & 49 & --- \\
+Comprar siempre ($+1$) & 2,65 & 12,35 & 0,21 & $-18{,}57$ & 0,0 & 0,0 & 50 & --- \\
+Comprar siempre ($+3$) & 7,96 & 37,06 & 0,21 & $-55{,}72$ & 0,0 & 100,0 & 50 & 50 \\
+No operar & 0,00 & 0,00 & --- & 0,00 & 100,0 & 0,0 & --- & --- \\
+\midrule
+\multicolumn{9}{l}{\emph{Pronóstico}} \\
+\multicolumn{9}{l}{Brier: M0 0,2503; M1 0,2509; M2 0,2509; M1C 0,2507. Clark-West M1 frente a M0: $-0{,}04$ ($p=0{,}52$).} \\
+\multicolumn{9}{l}{Pesaran-Timmermann, M1: DA 48,7\% frente a 49,9\% bajo independencia ($p=0{,}74$).} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Nota:} mismas definiciones que la Tabla~\ref{tab:economico}. Costo de 2 pb por unidad de cambio de exposición; carry incluido. 716 jornadas.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\paragraph{Evaluación formal.} Ninguna diferencia frente a las referencias favorece a la estrategia con significancia (Tabla~\ref{tab:formal_prueba}). Frente a no operar pierde 5,1 puntos anuales (\(p=0{,}85\)) y frente a comprar siempre, 7,8 puntos (\(p=0{,}81\)). La única comparación con signo favorable es frente a la señal con tamaño fijo: la regla de exposición pierde 3,8 puntos menos (\(p=0{,}27\)), porque se abstuvo el 54\% de los días y casi no usó la exposición máxima. El Sharpe de $-0{,}54$ queda en el lugar 36 de las 48 variantes y el \emph{Deflated Sharpe Ratio} es de 0,04 (0,03 con \(N=100\) y 200).
+
+\begin{table}[htbp]\centering\small
+\caption{Evaluación formal en el tramo de prueba: estrategia M1 ($c=\tfrac14$) frente a las referencias}\label{tab:formal_prueba}
+\begin{threeparttable}
+\begin{tabular}{l r c ccc rc}
+\toprule
+ & \multicolumn{5}{c}{Diferencia de retorno neto anual} & \multicolumn{2}{c}{Diferencia de Sharpe} \\
+\cmidrule(lr){2-6}\cmidrule(lr){7-8}
+Referencia & Dif. & IC 95\% & $p$ boot. & $p$ DM & $p$ Holm & Dif. & $p$ boot. \\
+\midrule
+No operar & $-5{,}14$ & [$-14{,}84$; 4,30] & 0,847 & 0,840 & 1,000 & $-0{,}54$ & 0,840 \\
+Comprar siempre ($+1$) & $-7{,}80$ & [$-25{,}55$; 9,98] & 0,806 & 0,797 & 1,000 & $-0{,}75$ & 0,819 \\
+Comprar siempre ($+3$) & $-13{,}10$ & [$-55{,}17$; 28,63] & 0,737 & 0,723 & 1,000 & $-0{,}75$ & 0,819 \\
+Señal con tamaño fijo & 3,75 & [$-8{,}49$; 15,55] & 0,269 & 0,270 & 1,000 & 0,18 & 0,364 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Nota:} mismas definiciones que la Tabla~\ref{tab:formal}. Los p-valores no cambian sustancialmente con bloques de 5 o 20 jornadas.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\textwidth]{fig5_curva_prueba.pdf}
+\caption{Tramo de prueba, 2024--2026: resultado acumulado neto de carry y costos de la estrategia M1 ($c=\tfrac14$, 2 pb) y de las referencias (panel superior), y exposición diaria (panel inferior).}\label{fig:curva_prueba}
+\end{figure}
+
+\paragraph{Ejecución, costos y perfiles.} Con ejecución a la apertura el resultado es casi el mismo ($-5{,}5$\% anual, Sharpe $-0{,}54$). La descomposición muestra que el tramo nocturno todavía aporta 4,9 puntos anuales en bruto, pero la sesión del día siguiente resta 8,2; con carry (0,1) y costos ($-2{,}0$) el resultado es $-5{,}1$. Como la estrategia ya pierde antes de costos, no existe un costo de equilibrio positivo, y con 8 pb por unidad, el costo de estrés equivalente a un \emph{spread} de 1,5 pesos, la pérdida sube a 11\% anual. El perfil institucional con su propia regla pierde 2,7\% anual, y el minorista no opera.
+
+\paragraph{Lectura de la convicción.} La Tabla~\ref{tab:conviccion} responde a lo que piden las bases: qué ocurrió en los días de máxima exposición y en los que el modelo se abstuvo. En validación, la ganancia venía sobre todo de los días con exposición de uno (37,0\% neto acumulado, acierto de 55\%); los 33 días en $\pm3$ aportaron 14,3\%, pero varios de sus mejores y peores resultados se concentran en marzo de 2020, y la abstención dejó pasar 18,9\% en bruto, una ganancia que la regla consideró insuficiente frente al riesgo y el costo. En la prueba, el patrón se invierte. La pérdida se concentra en los mismos días con exposición de uno (317 jornadas, $-15{,}6$\% neto acumulado, acierto de 47\%). Los 13 días en $\pm3$ ganaron 2,6\% neto, con 54\% de acierto, pero son muy pocos para sacar conclusiones. En los 386 días de abstención, seguir la señal con tamaño uno habría dado 2,5\% en bruto, antes de los costos de entrar y salir: la abstención no dejó pasar una ganancia relevante.
+
+\begin{table}[htbp]\centering\small
+\caption{Lectura de la convicción: validación y prueba}\label{tab:conviccion}
+\begin{threeparttable}
+\begin{tabular}{l rrrrrr}
+\toprule
+$|$Exposición$|$ & Jornadas & \% & Convicción media & Acierto & PnL bruto & PnL neto \\
+\midrule
+\multicolumn{7}{l}{\emph{Panel A: validación, 2020--2023}} \\
+0 & 548 & 54,3 & 0,512 & --- & 0,00 & $-2{,}84$ \\
+1 & 429 & 42,5 & 0,525 & 55,0 & 42,05 & 36,99 \\
+3 & 33 & 3,3 & 0,577 & 51,5 & 15,41 & 14,27 \\
+\midrule
+\multicolumn{7}{l}{\emph{Panel B: prueba, 2024--2026}} \\
+0 & 386 & 53,9 & 0,512 & --- & 0,00 & $-1{,}66$ \\
+1 & 317 & 44,3 & 0,523 & 47,3 & $-12{,}39$ & $-15{,}59$ \\
+3 & 13 & 1,8 & 0,574 & 53,8 & 3,38 & 2,64 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Nota:} convicción media = promedio de \(\max(p_t,1-p_t)\). Acierto en \%; PnL acumulado en \% del nocional, sin anualizar. El PnL neto de los días en 0 corresponde al costo de cerrar posiciones. El detalle de cada jornada en $\pm3$ está en \texttt{jornadas\_max\_exposicion.csv}, en \texttt{reports/prueba\_ensayo/} (validación) y \texttt{reports/prueba/} (prueba).
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\paragraph{Por qué falló: la señal se fue agotando.} El resultado de la prueba es el último paso de una tendencia visible desde antes. La Tabla~\ref{tab:deterioro} muestra que la correlación entre la señal NY y el retorno del día siguiente cae de 0,16 en 2004--2012 a 0,11 en 2013--2019, 0,05 en validación y $-0{,}02$ en la prueba. La caída ocurre sobre todo en el tramo nocturno, donde vivía la ventaja: de 0,24 a 0,05. Por año, la correlación de cierre a cierre es positiva en todos los años de 2004 a 2023, pero prácticamente nula en 2024 y 2025 ($-0{,}003$ y 0,004) y negativa en 2026 ($-0{,}07$).
+
+\begin{table}[htbp]\centering\small
+\caption{Deterioro de la señal NY}\label{tab:deterioro}
+\begin{threeparttable}
+\begin{tabular}{l cccc}
+\toprule
+ & 2004--2012 & 2013--2019 & 2020--2023 & 2024--2026 \\
+\midrule
+Correlación con el retorno de cierre a cierre & 0,159 & 0,108 & 0,051 & $-0{,}022$ \\
+Correlación con el tramo nocturno & 0,235 & 0,182 & 0,060 & 0,045 \\
+Correlación con la sesión del día siguiente & $-0{,}003$ & $-0{,}019$ & 0,018 & $-0{,}053$ \\
+Coeficiente de la señal en M1 & 0,215 & 0,114 & 0,143 & 0,086 \\
+ & (4,17) & (2,08) & (2,10) & (0,92) \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Nota:} correlaciones entre la señal NY del día \(t\) y el retorno en exceso de \(t+1\). Coeficiente del logit M1 estimado solo con cada tramo (descriptivo; no es el modelo operativo), con estadísticos \(t\) de Newey-West entre paréntesis.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+La prueba de robustez E15, registrada antes de la corrida, ya había advertido esta fragilidad. En validación, sacar del entrenamiento el tramo con huecos de 2011--2012 o partir en 2008 cambiaba poco el resultado (9,7\% y 9,0\% anual, frente a 12,1\%), pero entrenar el modelo solo con datos desde 2013 eliminaba la ganancia ($-0{,}2$\% anual): el resultado de 2020--2023 dependía de un tamaño de apuesta aprendido en parte en 2004--2012, cuando el efecto era más fuerte. En la prueba, todas las variantes pierden: sin el tramo con huecos de 2011--2012, $-6{,}2$\%; desde 2008, $-4{,}0$\%; desde 2013, $-4{,}7$\%. El problema no son los datos faltantes ni el punto de partida, sino que la señal dejó de funcionar.
+
+No contrastamos formalmente por qué se agotó. Dos explicaciones son coherentes con lo observado y quedan como hipótesis. La primera es el aprendizaje del mercado: una regularidad simple y conocida, la transmisión de los movimientos de Nueva York al peso del día siguiente, tiende a ser arbitrada cuando más participantes la explotan, lo que concuerda con la inestabilidad de la predictibilidad cambiaria que documenta \citet{rossi2013}. La segunda es un cambio en dónde se forma el precio: si una parte mayor de la reacción del peso ocurre en mercados que operan después del cierre local, como los forwards no entregables \emph{offshore}, la información de Nueva York queda incorporada antes de la apertura y deja menos margen al día siguiente.
+
+\paragraph{Decisión.} No modificamos el modelo después de ver la prueba. Cualquier cambio elegido mirando 2024--2026 sería un caso de sobreajuste al tramo que debe juzgarlo, y no tendría datos limpios con que evaluarse salvo las tres semanas del monitoreo, insuficientes para distinguir habilidad de azar. El modelo que opera en el monitoreo en vivo es el congelado.
 
 % ---------- secciones/07_robustez ----------
 \section{Robustez}\label{sec:robustez}
@@ -648,7 +760,7 @@ Año & Ret.\ neto (\%) & Sharpe & \% en 0 & \% en $\pm3$ & Comprar siempre (\%) 
 
 El tramo 2011--2019 es menos estable. Gana en 6 de 9 años, pero su resultado se concentra en 2011 y 2012, que suman un retorno anual promedio de 84\% con un Sharpe de 2,6; entre 2013 y 2019 la estrategia gana solo 2,8\% anual, con un Sharpe de 0,16. Los huecos de datos no explican 2011: solo 8 de sus 227 retornos cruzan más de tres días corridos, y aportan 7,5 de sus 72,6 puntos. En 2012 su peso es mayor: 17 de 129 retornos aportan 19,0 de 45,8 puntos. Pero en esos días la señal no funciona (correlación con el retorno de 0,05, frente a 0,23 en los demás días de 2011--2012), así que esa parte de la ganancia de 2012 es suerte y no habilidad. Lo que distingue a 2011--2013 es el tamaño de las apuestas: la señal fue fuerte en relación con el riesgo (2011 tiene la correlación más alta de la muestra, 0,26), y la regla mantuvo una exposición media de 2,3 a 2,8 unidades, con $\pm3$ el 80\% de los días de 2011. Esas apuestas ganaron mucho en 2011 y 2012 y perdieron en 2013. La calibración no es la causa: la pendiente de Platt de 2011, estimada con un solo año, fue de 2,4, pero sin calibrar 2011 también gana 65\%. La conclusión prudente es que el desempeño de 2011--2019 depende de dos años atípicos, en parte por suerte, y que la evidencia más confiable es la de validación, estable año a año.
 
-\subsection{Ejecución a precios disponibles}
+\subsection{Ejecución a precios disponibles}\label{sec:ejecucion}
 La convención del torneo liquida la exposición decidida con la información del día \(t\) con el retorno entre los cierres locales de \(t\) y \(t+1\), como si se pudiera operar al cierre local de \(t\), horas antes de conocer la señal. Un operador en Chile, en cambio, recién puede ejecutar a la apertura de la jornada siguiente. La Tabla~\ref{tab:ejecucion} separa el retorno de cada jornada en sus dos tramos y evalúa la misma secuencia de posiciones con distintos precios de ejecución.
 
 \begin{table}[htbp]\centering\small
@@ -690,7 +802,7 @@ El resultado es el más importante de esta sección para quien quiera ganar dine
 La Figura~\ref{fig:tramos} muestra la misma descomposición en el tiempo. En 2011--2019 la ganancia del tramo nocturno crece casi todos los años mientras la de la sesión cae de forma persistente, de modo que quien opera a la apertura pierde de manera sistemática. En 2020--2023 ambos tramos ganan, y la ejecución realista sigue de cerca a la convención del torneo.
 
 \subsection{Costos de transacción}\label{sec:costos}
-El costo base de 2 puntos base por unidad de cambio de exposición es un supuesto, porque las bases no fijan el costo de transacción. Corresponde al de un operador mayorista con acceso directo al mercado; el perfil institucional de la Sección~\ref{sec:perfiles} es más caro (6 a 8,5 pb). Para un inversionista minorista el costo es mayor y depende del canal. La Tabla~\ref{tab:canales} resume los spreads observados el 20 de octubre de 2026, con un tipo de cambio de referencia de unos 985 pesos, en que un peso de spread equivale a unos 10 puntos base. El costo por unidad de cambio es aproximadamente la mitad del spread, porque cada operación cruza medio spread.
+El costo base de 2 puntos base por unidad de cambio de exposición es un supuesto, porque las bases no fijan el costo de transacción. Corresponde al de un operador mayorista con acceso directo al mercado; el perfil institucional de la Sección~\ref{sec:perfiles} es más caro (6 a 8,5 pb). Para un inversionista minorista el costo es mayor y depende del canal. La Tabla~\ref{tab:canales} resume los spreads observados el 20 de octubre de 2026, con un tipo de cambio de referencia de unos 985 pesos, en que un peso de spread equivale a unos 10 puntos base. El costo por unidad de cambio es aproximadamente la mitad del spread, porque cada operación cruza medio spread. En la mentoría del 6 de noviembre, el laboratorio indicó que en el mercado interbancario (Datatec) el spread del USD/CLP es de unos 40 centavos para montos de hasta USD 20 millones y puede llegar a 1,5 pesos en momentos de estrés. Con el tipo de cambio medio del tramo de prueba (938 pesos), medio spread de 40 centavos equivale a 2,1 pb, lo que respalda el supuesto de 2 pb; el spread de estrés equivale a unos 8 pb por unidad, cerca del límite inferior del costo de equilibrio de validación. Con ese costo, la estrategia todavía ganaba 5,3\% anual en validación (Sharpe 0,41).
 
 \begin{table}[htbp]\centering\small
 \caption{Costo de operar USD/CLP para un inversionista minorista}\label{tab:canales}
@@ -762,17 +874,40 @@ Minorista, posiciones del torneo & 33,9 & $-59{,}02$ & $-2{,}69$ & & $-88{,}91$ 
 
 Con la convención del torneo, el inversionista institucional gana entre 2,0\% y 7,5\% anual en validación, según la regla, con un Sharpe de 0,17 a 0,57. Con ejecución a la apertura gana entre 0,9\% y 6,1\%, con un Sharpe de 0,06 a 0,39, y en 2011--2019 pierde con ambas reglas. Ninguno de esos Sharpe es distinguible de cero en cuatro años: el mayor, 0,57, equivale a un estadístico \(t\) de 1,1. El minorista, sabiendo su costo, prácticamente no opera, y si replicara las posiciones del torneo perdería entre 13\% y 14\% anual en validación. La tabla muestra además un resultado poco intuitivo: al institucional le habría convenido mantener las posiciones decididas con un costo menor que el suyo. Parte de esa diferencia refleja una limitación de la regla: cobra el costo completo de cada cambio contra la ganancia esperada de un solo día, aunque la posición suele mantenerse varios días, de modo que con costos altos cambia de posición menos de lo que convendría. No la corregimos porque la regla está congelada.
 
+\subsection{Fuentes de \emph{leakage}}\label{sec:leakage}
+Siguiendo la mentoría del 6 de noviembre, agrupamos en tres fuentes las brechas entre el \emph{backtest} y una implementación real, que en la práctica le restan puntos base de rentabilidad a un modelo cuantitativo.
+
+\emph{Horario de las variables frente al cierre.} Es la fuente principal en este estudio. Las bases indican, y el laboratorio lo confirmó, que todas las series se tratan como si cerraran el mismo día a la misma hora. En realidad, la señal NY se observa entre tres y seis horas después del cierre del mercado cambiario local, y la convención del torneo acredita el retorno desde ese cierre. La medimos con la ejecución a la apertura del día siguiente (Sección~\ref{sec:ejecucion}): en validación reduce el retorno de 12,1\% a 10,6\% anual y en 2011--2019 lo vuelve negativo. Una implementación más fina tomaría todas las series a una hora fija, algo que una base de cierres diarios no permite.
+
+\emph{Liquidez.} El costo crece con el tamaño de la operación y en momentos de estrés. Lo cubrimos con el costo base de 2 pb, el estrés de 8 pb, los perfiles de la Sección~\ref{sec:perfiles} y el costo de equilibrio. No modelamos una escala de costos por tamaño: con un nocional del orden de USD 1 millón por unidad, aun la exposición máxima queda muy por debajo del umbral de USD 20 millones en que, según el laboratorio, el spread interbancario empieza a ampliarse.
+
+\emph{Desfase entre la señal y la ejecución.} Entre la decisión y la orden las condiciones del mercado cambian. El primer precio transable para quien decide después del cierre de Nueva York es la apertura local del día siguiente, que es la ejecución alternativa que reportamos. En una puesta en producción real, el paso siguiente sería operar con montos pequeños (USD 200 a 500 mil) antes de escalar.
+
 \subsection{Síntesis}
-La estrategia es estable en validación: gana en todos los años, no depende de pocos días ni de la fracción de Kelly, y el placebo indica que su resultado no se explica por azar. Sus límites son tres. Primero, el tramo de validación se usó para elegir el modelo y la regla, de modo que la evidencia confirmatoria será la del tramo de prueba; el desempeño de 2011--2019 depende además de 2011 y 2012 (Sección~\ref{sec:estabilidad}). Segundo, la ventaja se concentra entre el cierre local y la apertura siguiente: con ejecución a la apertura, la estrategia gana 10,6\% anual en 2020--2023 y pierde en 2011--2019. Tercero, los costos: el equilibrio está entre 9 y 13 pb; un inversionista institucional gana poco y de manera indistinguible de cero, y un minorista no gana en ningún canal. La señal tiene valor para quien puede operar después del cierre local, por ejemplo en el mercado \emph{offshore} de forwards no entregables. Su valor capturable en el mercado local es pequeño e incierto.
+La estrategia es estable en validación: gana en todos los años, no depende de pocos días ni de la fracción de Kelly, y el placebo indica que su resultado no se explica por azar. Sus límites son tres. Primero, el tramo de validación se usó para elegir el modelo y la regla, de modo que la evidencia confirmatoria es la del tramo de prueba, donde la ventaja no se sostuvo (Sección~\ref{sec:prueba}); el desempeño de 2011--2019 depende además de 2011 y 2012 (Sección~\ref{sec:estabilidad}). Segundo, la ventaja se concentra entre el cierre local y la apertura siguiente: con ejecución a la apertura, la estrategia gana 10,6\% anual en 2020--2023 y pierde en 2011--2019. Tercero, los costos: el equilibrio está entre 9 y 13 pb; un inversionista institucional gana poco y de manera indistinguible de cero, y un minorista no gana en ningún canal. En validación, la señal tenía valor para quien podía operar después del cierre local, por ejemplo en el mercado \emph{offshore} de forwards no entregables, y su valor capturable en el mercado local era pequeño e incierto. En la prueba no tuvo valor en ninguno de los dos.
 
 % ---------- secciones/08_monitoreo ----------
 \section{Monitoreo en vivo}\label{sec:monitoreo}
-\pendiente{Procedimiento diario (\texttt{run\_daily.py}), registro de señales y resultados del 13 de noviembre al 1 de diciembre.}
+Del 13 de noviembre al 1 de diciembre de 2026 el modelo opera en modo simulado con datos que nadie vio durante su desarrollo. El modelo es el congelado el 6 de noviembre, sin ninguna modificación posterior: como indicó el laboratorio, solo vale lo que el modelo aprende por sí mismo, y en nuestro caso eso se limita a las volatilidades de 60 y 250 jornadas y a la regla de exposición, que dependen de los datos de cada día. Los coeficientes y la calibración del año se estimaron con datos anteriores al 1 de enero de 2026.
+
+El protocolo es el siguiente. El laboratorio envía la base actualizada cada par de días, igual para todas las parejas. Se guarda con el nombre exacto \texttt{data/base\_usdclp\_actualizada.xlsx}, reemplazando la anterior, y se ejecuta \texttt{python run\_daily.py -{}-pendientes}. El programa calcula la señal de cada jornada nueva con información hasta su propio cierre y la registra en \texttt{reports/senales\_diarias.csv} junto con tres huellas: la del código, la del archivo de la base y la de los datos que usa el modelo. Si una revisión de la base cambia la huella de datos de un día ya registrado, el tablero lo marca, porque la señal de ese día podría cambiar. El programa se detiene si se le pide una fecha posterior al último cierre de la base y avisa si la base viene atrasada. Cada día genera además el tablero de la mesa (\texttt{reports/tablero.html}), con la señal, su justificación, el resultado frente a las referencias y el estado de los datos.
+
+Este informe se entrega antes de que comience el monitoreo, por lo que no incluye sus resultados. Las señales de cada jornada quedan registradas en el repositorio a medida que se emiten, en \texttt{reports/senales\_diarias.csv} y en los tableros diarios de \texttt{reports/tableros/}, y el resultado del período se presentará en la final del 2 de diciembre. De acuerdo con las conclusiones de este estudio, esperamos un resultado cercano a cero y dominado por el azar: en tres semanas, una estrategia sin ventaja puede terminar con ganancias o pérdidas de dos o tres puntos porcentuales sin que eso diga nada sobre su calidad.
 
 
 % ---------- secciones/09_conclusiones ----------
 \section{Conclusiones}\label{sec:conclusiones}
-\pendiente{Respuesta a la pregunta, límites (potencia, asincronía, costos retail) y extensiones.}
+Nos preguntamos si es posible ganar dinero anticipando la dirección diaria del USD/CLP. Nuestra respuesta es que fue posible, pero ya no lo es con la información que estudiamos. Entre 2010 y 2023, los movimientos de Nueva York posteriores al cierre local anticiparon la dirección del peso al día siguiente, y una estrategia construida sobre esa señal ganó 12,1\% anual neto de carry y costos en validación. En el tramo de prueba, evaluado una sola vez con el modelo congelado, la misma estrategia perdió 5,1\% anual y la señal dejó de anticipar la dirección.
+
+\paragraph{Las hipótesis.} H1 se apoya en 2010--2023 (Clark-West, \(p=0{,}002\) y \(p=0{,}029\); Pesaran-Timmermann, \(p=0{,}002\) y \(p=0{,}007\)), pero no se confirma en la prueba (\(p=0{,}52\) y \(p=0{,}74\)). H2 no se rechaza en ninguna etapa: una vez incluida la señal de Nueva York, no encontramos evidencia de que el diferencial de tasas, la volatilidad emergente o el cobre agreguen información a un día. H3 se cumple solo en parte en validación, donde la estrategia supera a no operar con significancia y a comprar siempre por un margen grande pero estadísticamente marginal, y no se cumple en la prueba, donde no supera a ninguna de las referencias.
+
+\paragraph{No fue mala suerte.} La baja potencia anticipada en la Sección~\ref{sec:evaluacion} explica por qué una ventaja real podía no alcanzar significancia, pero no explica una pérdida. Si la estrategia hubiera conservado el Sharpe de 0,9 de validación, la probabilidad de observar un Sharpe de $-0{,}54$ o menor en 716 jornadas sería de alrededor de 1\%. El resultado indica que la ventaja desapareció, y la Tabla~\ref{tab:deterioro} muestra cómo: la correlación entre la señal y el retorno del día siguiente cayó de 0,16 en 2004--2012 a 0,11, 0,05 y finalmente cero. La asincronía de cierres fue una fuente real pero transitoria de predictibilidad, coherente con la evidencia de que la predictibilidad cambiaria es inestable en el tiempo \citep{rossi2013} y con la dificultad, documentada desde \citet{meese1983}, de superar al \emph{random walk} de manera persistente.
+
+\paragraph{Qué funcionó.} El proceso permitió detectar el problema antes de comprometer capital. Varias señales de alerta estaban registradas antes de la prueba: el \emph{Deflated Sharpe Ratio} de validación (0,65) no alcanzaba el umbral habitual, la ventaja se concentraba en el tramo no transable y la prueba de robustez E15 mostró que, entrenado solo con datos desde 2013, el modelo ya no ganaba en validación. La regla de exposición también cumplió su función defensiva: se abstuvo el 54\% de los días, casi no usó la exposición máxima y perdió menos que la misma señal con tamaño fijo ($-5{,}1$\% frente a $-8{,}9$\%). Como el modelo y la evaluación se fijaron antes de mirar la prueba, su resultado es creíble, incluso siendo negativo.
+
+\paragraph{Límites.} Cuatro límites acotan estas conclusiones. Primero, el supuesto de cierre común: la ventaja de validación dependía de información que en la práctica llega después del cierre local, y con ejecución a la apertura era menor y menos estable. Segundo, el costo de 2 pb es un supuesto: aun en su mejor momento, la estrategia toleraba entre 9 y 13 pb por unidad, un margen que un inversionista minorista no tiene. Tercero, las hipótesis sobre por qué se agotó la señal no se contrastaron. Cuarto, el tramo de prueba es corto, y el monitoreo en vivo, de tres semanas, lo es aún más: con la señal agotada, esperamos que su resultado sea cercano a cero y esté dominado por el azar.
+
+\paragraph{Extensiones.} Tres extensiones se desprenden directamente del estudio. La primera es una regla de apagado definida de antemano, que suspenda la estrategia cuando la capacidad predictiva medida en una ventana reciente cae bajo un umbral. Las señales para activarla estaban disponibles: la correlación de la señal ya era de 0,05 en 2020--2023. Fijar la regla antes de mirar los datos es la única manera de que su evaluación sea creíble, y no la evaluamos aquí por esa razón. La segunda es medir la transmisión con datos intradía tomados a una hora fija, como se hace en las mesas de dinero, para separar la información que realmente llega después del cierre local de la que solo aparenta hacerlo. La tercera es estudiar el mercado \emph{offshore} de forwards no entregables, como lugar de ejecución para quien decide después del cierre de Nueva York y como posible explicación de que la información se incorpore antes de la apertura.
 
 
 \newpage
@@ -982,6 +1117,8 @@ E10 & 20 oct & \emph{Prerregistro}: M1 + cobre COMEX; entra si Clark-West frente
 E11 & 20 oct & Diagnóstico por año de la estrategia & 2011--2012 concentran el resultado de 2011--2019, con huecos de datos & Se reporta en robustez \\
 E12 & 21 oct & \emph{Prerregistro}: perfiles institucional (0,5 pesos) y minorista (2 pesos) & Institucional 2,0--7,5\% anual en validación; minorista no opera & Se reportan junto al resultado oficial \\
 E13 & 21 oct & \emph{Prerregistro}: perfiles por ejecución (cierre a cierre y apertura a apertura); corrección del carry de la ejecución a la apertura & Apertura a apertura: $-13{,}4$\% y 10,6\% anual; institucional 0,9--6,1\% en validación & Se reporta junto al resultado oficial \\
+E14 & 6 nov & \emph{Prerregistro} de la corrida única del tramo de prueba (\texttt{prueba.py}): mismo análisis de validación, más la lectura de la convicción y 8 pb como costo de estrés & Prueba 2024--2026: $-5{,}1$\% anual, Sharpe $-0{,}54$; Clark-West \(p=0{,}52\) & Se reporta tal como salió; el modelo no se modifica \\
+E15 & 6 nov & \emph{Prerregistro}: robustez a la muestra de entrenamiento (sin el tramo con huecos 2011--2012; inicio en 2008 y en 2013), sugerida en la mentoría & Validación: 9,7\%, 9,0\% y $-0{,}2$\% (oficial 12,1\%); prueba: $-6{,}2$\%, $-4{,}0$\% y $-4{,}7$\% & Solo robustez; fragilidad declarada antes de la corrida \\
 \bottomrule
 \end{tabularx}
 \begin{tablenotes}\footnotesize
@@ -990,6 +1127,49 @@ E13 & 21 oct & \emph{Prerregistro}: perfiles por ejecución (cierre a cierre y a
 \end{table}
 
 \paragraph{Número de ensayos.} El \emph{Deflated Sharpe Ratio} cuenta como ensayo cada variante cuyo resultado económico se observó antes de elegir la estrategia final: tres modelos (M1, M2 y M1C), cuatro versiones de cada uno (ventana expansiva, móvil, promedio y promedio calibrado), dos fracciones de Kelly (\(\tfrac14\) y \(\tfrac15\)) y dos reglas de exposición (la original y la de utilidad), en total \(N=48\). Los análisis de robustez, diagnóstico y evaluación (E06--E09 y E11--E13) no se cuentan como ensayos, porque no generaron estrategias candidatas: aplican la misma estrategia a otros precios, costos o subperíodos. El conteo tampoco incluye elecciones que no produjeron una variante con resultado observado: el cribado de 21 series de E01, la regla simple de E02, las ventanas de 60, 250 y 1.250 jornadas y el embargo. Por eso la Sección~\ref{sec:resultados} reporta también el DSR con \(N=100\) y \(N=200\) (0,81 y 0,77 en 2011--2019; 0,58 y 0,51 en 2020--2023).
+
+\section{Bitácora de decisiones}\label{app:bitacora}
+
+Esta bitácora resume, para cada decisión metodológica del estudio, qué alternativas se consideraron, cuál se eligió y por qué, con la evidencia que la respalda. Responde a una recomendación de la mentoría del 6 de noviembre: documentar el proceso de decisión, incluidos los modelos y tratamientos descartados. Los identificadores E01--E15 remiten a la Tabla~\ref{tab:registro}.
+
+\begin{table}[htbp]\centering\scriptsize
+\caption{Bitácora de decisiones, parte 1: datos}\label{tab:bitacora1}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.4cm}@{}}
+\toprule
+Decisión & Alternativas consideradas & Elegida y por qué & Evidencia \\
+\midrule
+Objeto de predicción & Dirección del precio; dirección del retorno en exceso de carry & Exceso de carry: las bases liquidan cada jornada con el carry, que puede jugar a favor o en contra de la posición & Auditoría: el signo cambia por el carry en 1,4\% de los días \\
+Horario de cierre & Rezagar un día las series que cierran después del peso; tomar todas las series a una hora fija; suponer un cierre común & Cierre común, como indicó el laboratorio en la mentoría. La hora fija no es posible porque la base trae solo cierres diarios. Se declara como la principal fuente de \emph{leakage} y se reporta la ejecución a la apertura & E07, E13; Tabla~\ref{tab:prueba} \\
+Huecos de 2011--2012 & Rellenar con el dólar observado; filtro de Kalman; base común a todas las series (\emph{inner join}); excluir los retornos que cruzan huecos & Excluir los retornos que cruzan más de 6 días corridos. Rellenar inventaría valores de la variable objetivo, y el dólar observado del día \(t\) es el spot de \(t-1\). Kalman se reserva para predictores de baja frecuencia, que el modelo final no usa & Auditoría; E11; E15: sin el tramo dañado el modelo decide igual el 96\% de los días \\
+Feriados y cotizaciones repetidas & Mantenerlos; eliminarlos & Eliminar los días con cierre repetido y rango cero y usar el calendario desde 2004 (antes, el OHLC no tiene contenido) & Auditoría \\
+Series de otras plazas & Rellenar sin límite; rellenar hasta 3 jornadas; descartar el día & Último valor disponible hasta 3 jornadas, sin mirar adelante, con aviso en la señal diaria & Prueba anti \emph{look-ahead}: diferencia 0 \\
+Valores extremos & Winsorizar en 3 desviaciones estándar; suavizar con EWMA; mantenerlos & Mantenerlos. La señal es un promedio de seis retornos normalizados por su volatilidad (máximo absoluto de 4,0 en 2004--2023), el logit acota la probabilidad y Kelly reduce el tamaño cuando sube la volatilidad. Los días con señal extrema son informativos: los de \(|\text{señal}|>2\), entre 1\% y 2\% de los días, explican entre 30\% y 37\% de la ganancia de 2011--2023. Eventos como el estallido social y el COVID son información sobre el peso, no ruido ajeno & Diagnóstico del 6 de noviembre \\
+Series candidatas & 21 series de la base; cobre COMEX; carry y volatilidad emergente; flujos del BCCh; datos macro; dólar observado & Señal NY. El cobre no agrega información una vez incluida la señal (su movimiento ya está en las monedas emergentes); los flujos reaccionan al precio en vez de anticiparlo; los datos macro se publican con unas 5 semanas de rezago & E01, E03, E10; auditoría \\
+Lectura de la base & Buscar el archivo más reciente por patrón; nombre exacto & Nombre exacto, con error si falta y huellas del archivo y de los datos en cada señal. La búsqueda por patrón leía la versión antigua sin avisar & Base del 6 de noviembre: historia idéntica hasta 2023 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htbp]\centering\scriptsize
+\caption{Bitácora de decisiones, parte 2: modelo, regla y evaluación}\label{tab:bitacora2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.4cm}@{}}
+\toprule
+Decisión & Alternativas consideradas & Elegida y por qué & Evidencia \\
+\midrule
+Familia de modelos & Logit; árboles con \emph{boosting} (LightGBM); momentum & Logit anidado. Con una señal débil y pocas variables útiles, un modelo flexible sobreajusta con facilidad; el logit es interpretable y se calibra bien. LightGBM y momentum se descartaron por diseño, antes de mirar resultados & E03 \\
+Selección de variables & Agregar todo lo que mejore el ajuste; escalera prerregistrada & Escalera M0 \(\rightarrow\) M1 \(\rightarrow\) M2: una variable entra solo si mejora el pronóstico fuera de muestra con Clark-West, \(p<0{,}05\) & E03, E10 \\
+Entrenamiento y prueba & Validación cruzada aleatoria; ventanas móviles traslapadas; \emph{walk-forward} & \emph{Walk-forward} anual sin muestreo aleatorio, con un embargo de 5 jornadas, promediando una ventana acumulativa (desde 2004) y una fija (1.250 jornadas), como sugirió la mentoría para series de tiempo & E03; E15 (el punto de partida importa) \\
+Calibración & Sin calibrar; isotónica; Platt anual & Platt anual con las predicciones fuera de muestra de años anteriores: monótona, estable con pocos datos y coherente con que las bases premian la calibración & Sección~\ref{sec:resultados} \\
+Regla de exposición & Signo de la señal con tamaño fijo; Kelly redondeado con filtro de costo; Kelly discreto por utilidad & Kelly discreto por utilidad, que incorpora riesgo y costo. El redondeo prerregistrado ignoraba el riesgo (87\% de los días en \(\pm3\)) & E04, E05 \\
+Fracción de Kelly & \(c=\tfrac14\); \(c=\tfrac15\) & \(c=\tfrac14\), prerregistrada; \(\tfrac15\) como robustez, sin que ninguna domine & E05, E06 \\
+Costos & Escala de costos por tamaño; 1 pb; 2 pb; perfiles & 2 pb por unidad de cambio, cercano a medio \emph{spread} de 40 centavos que mencionó la mentoría; estrés de 8 pb (\emph{spread} de 1,5 pesos); perfiles institucional y minorista; costo de equilibrio & E08, E12, E14 \\
+Ejecución & Solo cierre a cierre; solo apertura & Cierre a cierre como convención oficial y apertura a apertura con la misma prominencia & E07, E13 \\
+Inferencia & Solo Diebold-Mariano; solo bootstrap & Clark-West, Diebold-Mariano y Pesaran-Timmermann para el pronóstico; bootstrap estacionario con Holm para el valor económico; \emph{Deflated Sharpe Ratio} con \(N=48\), 100 y 200 & E09 \\
+Congelamiento & 8 de noviembre; 6 de noviembre & 6 de noviembre, con el código etiquetado \texttt{v0.9-congelado} antes de mirar el tramo de prueba & E14 \\
+Después de la prueba & Revisar el modelo; mantenerlo & Mantenerlo. Un cambio elegido mirando 2024--2026 sería sobreajuste y solo podría evaluarse con las tres semanas del monitoreo & Sección~\ref{sec:prueba} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{Reproducibilidad}\label{app:repro}
 

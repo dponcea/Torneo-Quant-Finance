@@ -1,10 +1,23 @@
 # Torneo USD/CLP · Itaú–FEN
 
-Última actualización: 2026-11-06 17:52 (hora de Chile). Autores: Diego Ponce y Simón Canales.
+Última actualización: 2026-11-06 18:55 (hora de Chile). Autores: Diego Ponce y Simón Canales.
 
 Modelo para predecir la dirección del USD/CLP de la jornada siguiente (en exceso de carry) y traducirla en exposición −3/−1/0/+1/+3.
 
 **Modelo operativo: M1** = logit con la señal de Nueva York (MXN, ZAR, BRL, DXY, −EURUSD, −S&P 500, normalizados por volatilidad) y el retorno del propio CLP; walk-forward anual con ventana expansiva y móvil promediadas; calibración de Platt; exposición con Kelly fraccional discreto (c = ¼) y costo de 2 pb por unidad de cambio.
+
+## Resultados
+
+| Tramo | Retorno neto anual | Sharpe | Pérdida máx. | Clark-West M1 vs M0 |
+|---|---|---|---|---|
+| Validación 2020–2023 (elección del modelo) | 12,1 % | 0,92 | −10 % | p = 0,029 |
+| **Prueba 2024–2026** (corrida única, 6-nov-2026) | **−5,1 %** | **−0,54** | −21 % | p = 0,52 |
+
+Netos de carry y de 2 pb por unidad de cambio de exposición, con la convención del torneo (cierre a cierre). En la prueba, comprar dólares siempre ganó 2,7 % anual.
+
+**Lectura.** La señal de Nueva York anticipó la dirección del peso entre 2004 y 2023, pero se fue debilitando: su correlación con el retorno del día siguiente pasó de 0,16 (2004–2012) a 0,11 (2013–2019), 0,05 (2020–2023) y −0,02 (2024–2026). La fragilidad se registró antes de mirar la prueba (E15), y el modelo no se modificó después de verla. El detalle está en el informe (`informe/`, secciones 6.2 y 9) y en `reports/prueba/resultados.txt`.
+
+**Materiales del laboratorio.** Las bases mencionan un «código de evaluación» y una «estructura base del programa»; el laboratorio informó que el código de evaluación no se publica, y la estructura base no la recibimos. El repositorio se construyó desde cero, con las tres referencias de las bases (comprar siempre, no operar y exposición fija 1) implementadas en `src/evaluacion.py` y `prueba.py`.
 
 ## Estructura
 - `src/config.py`: parámetros prerregistrados (13 y 20-oct-2026). No cambiarlos tras ver resultados.
