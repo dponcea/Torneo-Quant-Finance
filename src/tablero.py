@@ -9,7 +9,7 @@ No estima nada: usa las probabilidades y exposiciones que calculó run_daily.cal
 el tablero muestra exactamente lo que emite la señal. Funciona sin internet (sin librerías externas).
 Solo usa información hasta el cierre de la fecha de decisión; la última jornada queda «abierta».
 """
-# Última actualización: 2026-10-25 22:04 (hora de Chile) — precio en pesos (cierre, movimiento del dólar, gráfico con compras y ventas, PnL en pesos), separado del resultado en %
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — muestra archivo, último cierre del USD/CLP y huellas de la base y de los datos (sin cambios en cálculos)
 import datetime as dt
 import json
 import re

@@ -5,6 +5,12 @@ Uso (desde la carpeta del proyecto, después de actualizar el Excel de la base):
     python run_daily.py                    # usa la última fecha disponible en la base
     python run_daily.py --fecha 2023-12-28 # simula la decisión de un día pasado
     python run_daily.py --fecha 2023-12-28 --desde 2023-11-13   # tablero con seguimiento desde esa fecha
+    python run_daily.py --pendientes       # registra todas las jornadas de la base aún no registradas
+
+La base se lee de data/base_usdclp_actualizada.xlsx (nombre exacto, ver src/config.py). Cada base
+nueva del laboratorio se guarda ahí con ese nombre, reemplazando la anterior. Como el laboratorio
+envía la base cada par de días, después de guardarla se corre --pendientes: calcula la señal de
+cada jornada nueva con información hasta su propio cierre (la base se recorta a cada fecha).
 
 Qué hace, con el modelo congelado (M1 + Platt + Kelly fraccional, ver src/config.py):
   1. Construye la tabla de variables con información hasta el cierre de la fecha de decisión.
@@ -26,7 +32,7 @@ El candado usa la fecha del sistema del computador: evita un accidente, pero no 
 garantía (cambiar la fecha del sistema lo desactiva). La garantía es el registro de
 experimentos y la huella del código de cada señal.
 """
-# Última actualización: 2026-10-25 20:16 (hora de Chile) — calcular() devuelve el contexto para el tablero; genera reports/tablero.html (--no-tablero, --desde); la señal no cambia
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — base por nombre exacto; se detiene si la fecha pedida es posterior al último cierre de la base; aviso de base atrasada; cada señal registra archivo, huella de la base y huella de los datos; --pendientes registra todas las jornadas que faltan
 import argparse
 import datetime as dt
 import hashlib
@@ -63,14 +69,19 @@ def _predecir(tabla, cols, ventana, anio, embargo=5):
     return pd.Series(res.predict(modelo._diseno(filas, cols, media, desv)), index=filas.index)
 
 
-def calcular(fecha=None):
+def calcular(fecha=None, x=None):
     """Calcula la señal de `fecha` y devuelve (fila del registro, contexto para el tablero).
 
     El contexto trae la base recortada a la fecha, la tabla de variables, las probabilidades
     calibradas y la trayectoria de exposiciones desde 2011: el tablero no recalcula el modelo."""
-    x = datos.cargar_base()
-    ultima_base = x.index.max()
+    if x is None:
+        x = datos.cargar_base()
+    ultima_base = datos.ultima_jornada(x)      # último cierre del USD/CLP (no el último día calendario)
     fecha = pd.Timestamp(fecha) if fecha else ultima_base
+    if fecha > ultima_base:
+        sys.exit(f"La base ({C.ARCHIVO_BASE.name}) tiene cierres del USD/CLP solo hasta el {ultima_base.date()}; "
+                 f"no puede decidir el {fecha.date()}. Guarda la base más reciente del laboratorio en "
+                 f"data/{C.NOMBRE_BASE} y vuelve a correr.")
 
     hoy = pd.Timestamp(dt.date.today())
     if hoy < pd.Timestamp(C.FECHA_CONGELAMIENTO) and fecha > pd.Timestamp(C.FIN_EXPLORACION):
@@ -85,6 +96,11 @@ def calcular(fecha=None):
     # Frescura: cada serie de la señal NY debe tener cierre en la fecha de decisión.
     avisos = [f"{t}: último cierre {x[f'{t}|PX_LAST'].last_valid_index().date()}"
               for t in C.PARES_NY if x[f"{t}|PX_LAST"].last_valid_index() < fecha]
+    # Base atrasada: se decide con el último cierre de la base, pero la base no trae los días recientes.
+    atraso = int(np.busday_count(ultima_base.date(), hoy.date()))
+    if fecha == ultima_base and atraso > 1:
+        avisos.append(f"base atrasada: último cierre del USD/CLP el {ultima_base.date()} "
+                      f"({atraso} días hábiles antes de hoy); pedir la base actualizada al laboratorio")
 
     cols = C.MODELOS[MODELO]
     anio = fecha.year
@@ -115,6 +131,9 @@ def calcular(fecha=None):
     fila = {
         "fecha_decision": fecha.date().isoformat(),
         "ultima_fecha_base": ultima_base.date().isoformat(),
+        "archivo_base": C.ARCHIVO_BASE.name,
+        "huella_base": datos.huella_archivo(),
+        "huella_datos": datos.huella_datos(x, fecha),
         "p_bruta": round(float(p_anio.loc[fecha]), 4),
         "p_calibrada": round(float(p_cal.loc[fecha]), 4),
         "platt_a": round(float(a), 4), "platt_b": round(float(b), 4),
@@ -155,20 +174,48 @@ def main():
     ap.add_argument("--fecha", help="fecha de decisión AAAA-MM-DD (por defecto, la última de la base)")
     ap.add_argument("--no-registrar", action="store_true", help="no escribir en reports/senales_diarias.csv")
     ap.add_argument("--no-tablero", action="store_true", help="no generar el tablero HTML (reports/tablero.html)")
+    ap.add_argument("--pendientes", action="store_true",
+                    help="calcula y registra todas las jornadas de la base posteriores a la última registrada "
+                         "(o desde --fecha); el tablero queda con la última")
     ap.add_argument("--desde", help="inicio del seguimiento en el tablero AAAA-MM-DD (por defecto, "
                     "C.INICIO_MONITOREO; en una simulación anterior, el 1 de enero del año de la fecha)")
     args = ap.parse_args()
 
-    s, ctx = calcular(args.fecha)
+    if args.pendientes:
+        x = datos.cargar_base()
+        jornadas = datos.calendario(x).index
+        if args.fecha:
+            inicio = pd.Timestamp(args.fecha)
+        elif ARCHIVO_REGISTRO.exists():
+            inicio = pd.Timestamp(pd.read_csv(ARCHIVO_REGISTRO, dtype=str)["fecha_decision"].max()) + pd.Timedelta(days=1)
+        else:
+            sys.exit("No hay registro previo: indica con --fecha la primera jornada a registrar.")
+        fechas = [f for f in jornadas if f >= inicio]
+        if pd.Timestamp(dt.date.today()) < pd.Timestamp(C.FECHA_CONGELAMIENTO):   # candado: solo hasta 2023
+            fechas = [f for f in fechas if f <= pd.Timestamp(C.FIN_EXPLORACION)]
+        if not fechas:
+            sys.exit(f"No hay jornadas nuevas: la base llega hasta el {datos.ultima_jornada(x).date()}.")
+        print(f"Jornadas pendientes: {len(fechas)} ({fechas[0].date()} a {fechas[-1].date()})")
+        for f in fechas[:-1]:
+            s_, _ = calcular(f, x)
+            if not args.no_registrar:
+                registrar(s_)
+            print(f"  {s_['fecha_decision']}: exposición {s_['exposicion']:+d} (p = {s_['p_calibrada']:.1%})"
+                  + (f"  ATENCIÓN: {s_['avisos']}" if s_["avisos"] else ""))
+        args.fecha = fechas[-1]
+        s, ctx = calcular(args.fecha, x)
+    else:
+        s, ctx = calcular(args.fecha)
     print(f"\nSeñal USD/CLP · decisión al cierre del {s['fecha_decision']} (para la jornada siguiente)")
     print(f"  Probabilidad de que el dólar suba en exceso de carry: {s['p_calibrada']:.1%} "
           f"(bruta {s['p_bruta']:.1%}; señal NY {s['senal_ny']:+.2f})")
     print(f"  Retorno esperado {s['mu_pb']:+.1f} pb · riesgo diario {s['sigma_pb']:.1f} pb")
     print(f"  EXPOSICIÓN: {s['exposicion']:+d}  ({s['direccion']}; antes {s['exposicion_anterior']:+d}, "
           f"cambio {s['cambio']:+d})")
-    print(f"  Versión del código: {s['huella_codigo']}")
+    print(f"  Versión del código: {s['huella_codigo']} · base {s['archivo_base']} (huella {s['huella_base']}, "
+          f"último cierre {s['ultima_fecha_base']}) · huella de los datos {s['huella_datos']}")
     if s["avisos"]:
-        print(f"  ATENCIÓN, series sin cierre en la fecha de decisión: {s['avisos']}")
+        print(f"  ATENCIÓN: {s['avisos']}")
     if not args.no_registrar:
         registrar(s)
         print(f"  Registrada en {ARCHIVO_REGISTRO.relative_to(C.RAIZ)}")

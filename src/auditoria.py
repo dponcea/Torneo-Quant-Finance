@@ -4,16 +4,20 @@ Reproduce las pruebas de cada trampa del diccionario y la prueba de la
 hipótesis de cierres de Nueva York. Solo usa datos hasta 2023-12-31: el
 tramo de prueba (2024-01 en adelante) no se mira.
 
-Uso:  python src/auditoria.py data/base_usdclp.xlsx
+Uso:  python src/auditoria.py            (lee data/base_usdclp_actualizada.xlsx, ver src/config.py)
+      python src/auditoria.py RUTA.xlsx  (otra base)
 Salida: imprime las tablas y guarda reports/auditoria_resultados.txt
 """
-# Última actualización: 2026-10-20 17:15 (hora de Chile) — sin cambios de lógica; se agrega sello de versión
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — por defecto lee la base de config (nombre exacto); [4]–[6] (tasas) se recortan a 2023 como el resto
 import io
 import sys
 from contextlib import redirect_stdout
 
 import numpy as np
 import pandas as pd
+
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[1]))
+from src import config as C  # noqa: E402
 
 FIN_EXPLORACION = "2023-12-31"
 
@@ -60,6 +64,9 @@ def observado(x):
 
 
 def tasas(x):
+    # Corrección 6-nov-2026: antes estas líneas usaban toda la muestra (tasas de 2024-2026, no retornos);
+    # ahora se recortan a FIN_EXPLORACION como el resto de los análisis.
+    x = x[x.index <= FIN_EXPLORACION]
     icp = px(x, "CLICP Index")
     dias = icp.index.to_series().diff().dt.days
     cam = ((icp / icp.shift()) ** (1 / dias) - 1) * 360 * 100
@@ -143,4 +150,4 @@ def main(ruta):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "data/base_usdclp.xlsx")
+    main(sys.argv[1] if len(sys.argv) > 1 else C.ARCHIVO_BASE)

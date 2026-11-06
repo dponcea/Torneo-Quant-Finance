@@ -3,28 +3,28 @@
 No modificar después de ver resultados: cualquier cambio debe anotarse en
 el registro de experimentos (reports/registro_experimentos.csv).
 """
-# Última actualización: 2026-10-25 20:16 (hora de Chile) — fechas del monitoreo (INICIO_MONITOREO, FIN_MONITOREO) para el tablero
+# Última actualización: 2026-11-06 17:52 (hora de Chile) — congelamiento adelantado al 6-nov (decisión de los autores); base por nombre exacto (data/base_usdclp_actualizada.xlsx); TORNEO_BASE permite otra ruta
+import os
 from pathlib import Path
 
 # Rutas (relativas a la raíz del proyecto)
 RAIZ = Path(__file__).resolve().parents[1]
-def _buscar_base():
-    """Busca el Excel del laboratorio (base_usdclp*.xlsx) en data/ o en la raíz del proyecto."""
-    for carpeta in (RAIZ / "data", RAIZ):
-        encontrados = sorted(carpeta.glob("base_usdclp*.xlsx"))
-        if encontrados:
-            return encontrados[0]
-    return RAIZ / "data" / "base_usdclp.xlsx"
 
-
-ARCHIVO_BASE = _buscar_base()
+# Base del laboratorio: se lee SIEMPRE por su nombre exacto (decisión del 6-nov-2026).
+# Antes se buscaba el patrón base_usdclp*.xlsx y se tomaba el primero en orden alfabético: con dos
+# versiones en data/, el código leía la antigua sin avisar. Cada base nueva del laboratorio se guarda
+# en data/ con este nombre, reemplazando la anterior. Si el archivo no está, el código se detiene.
+# Para usar otro archivo (por ejemplo, el jurado con su copia) basta definir la variable de entorno
+# TORNEO_BASE con la ruta completa; queda registrado en cada señal (archivo_base, huella_base).
+NOMBRE_BASE = "base_usdclp_actualizada.xlsx"
+ARCHIVO_BASE = Path(os.environ.get("TORNEO_BASE") or (RAIZ / "data" / NOMBRE_BASE))
 
 # Tramos de la muestra
 INICIO = "2004-01-01"          # antes: calendario con feriados rancios y OHLC sin contenido
 INICIO_OOS = 2010              # primer año con predicciones fuera de muestra (para Platt)
 VALIDACION = (2020, 2023)      # tramo de validación
-FIN_EXPLORACION = "2023-12-31" # NO usar datos posteriores hasta congelar el modelo (8-nov)
-FECHA_CONGELAMIENTO = "2026-11-08"  # run_daily.py no acepta fechas > FIN_EXPLORACION antes de este día
+FIN_EXPLORACION = "2023-12-31" # fin de los datos usados para construir y validar el modelo
+FECHA_CONGELAMIENTO = "2026-11-06"  # adelantado desde el 8-nov el 6-nov-2026; antes de este día nada mira fechas > FIN_EXPLORACION
 INICIO_MONITOREO = "2026-11-13"    # primer día del monitoreo en vivo (el tablero mide el seguimiento desde aquí)
 FIN_MONITOREO = "2026-12-01"       # último día del monitoreo en vivo
 

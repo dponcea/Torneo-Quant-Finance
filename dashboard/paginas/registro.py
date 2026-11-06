@@ -1,5 +1,5 @@
 """Página: registro de señales emitidas (reports/senales_diarias.csv) y tableros diarios."""
-# Última actualización: 2026-10-25 21:32 (hora de Chile) — versión inicial
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — muestra archivo, huella de la base y huella de los datos de cada señal
 import pandas as pd
 import streamlit as st
 
@@ -34,8 +34,10 @@ cm.metrica(c, "Versiones de código usadas", r["huella_codigo"].nunique(), f"hue
 if (r.coincide == "≠").any():
     st.error("Hay señales registradas que no coinciden con la reconstrucción de hoy: revisar la base y la huella del código.", icon="⚠️")
 
-vista = r[["fecha_decision", "emitida", "p_calibrada", "exposición registrada", "reconstruida hoy", "coincide",
-           "senal_ny", "mu_pb", "sigma_pb", "huella_codigo", "ultima_fecha_base", "avisos"]].iloc[::-1]
+cols_vista = ["fecha_decision", "emitida", "p_calibrada", "exposición registrada", "reconstruida hoy", "coincide",
+              "senal_ny", "mu_pb", "sigma_pb", "huella_codigo", "archivo_base", "huella_base", "huella_datos",
+              "ultima_fecha_base", "avisos"]
+vista = r[[c for c in cols_vista if c in r.columns]].iloc[::-1]   # filas antiguas no traen las huellas de la base
 st.dataframe(vista, width="stretch", hide_index=True)
 
 st.divider()

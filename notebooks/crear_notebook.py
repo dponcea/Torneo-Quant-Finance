@@ -14,7 +14,7 @@ nb.cells = [
          "import numpy as np, pandas as pd, matplotlib.pyplot as plt\n"
          "from src import config as C, datos, modelo, evaluacion as ev, figuras\n"
          "pd.set_option('display.width', 200); pd.set_option('display.max_columns', 30)"),
-    md("## 0. Versión\n\n**Última actualización del notebook: 2026-10-21 21:54 (hora de Chile).** "
+    md("## 0. Versión\n\n**Última actualización del notebook: 2026-11-06 17:46 (hora de Chile).** "
        "La celda siguiente muestra la fecha de modificación de cada archivo en tu PC y su sello de versión, "
        "para verificar que tienes la última versión (compárala con `CHANGELOG.md`)."),
     code("import datetime as _dt\nraiz = pathlib.Path.cwd().parent\nfilas = []\n"
@@ -24,6 +24,10 @@ nb.cells = [
          "                  'modificado en tu PC': _dt.datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d %H:%M'),\n"
          "                  'sello de versión': sello})\n"
          "pd.DataFrame(filas).set_index('archivo')"),
+    code("print('Base leída:', C.ARCHIVO_BASE.name, '· huella', datos.huella_archivo(),\n"
+         "      '· modificada en tu PC', _dt.datetime.fromtimestamp(C.ARCHIVO_BASE.stat().st_mtime).strftime('%Y-%m-%d %H:%M'))\n"
+         "print('Huella de los datos que usa el modelo hasta 2023-12-29 (base del 6-oct y del 6-nov: d6ae3102ed):',\n"
+         "      datos.huella_datos(datos.cargar_base(), '2023-12-29'))"),
     md("## 1. Tabla de modelamiento y prueba anti look-ahead"),
     code("x = datos.cargar_base()\ntabla_completa = datos.construir_tabla(x)\n"
          "print('Diferencia máxima al truncar la base (debe ser 0):', datos.chequear_sin_lookahead(x, tabla_completa))\n"

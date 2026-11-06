@@ -6,7 +6,7 @@ calibradas y las exposiciones vienen de run_daily.calcular, sin recalcular el mo
 Disciplina: mientras no llegue la fecha de congelamiento (C.FECHA_CONGELAMIENTO), la app solo
 muestra datos hasta C.FIN_EXPLORACION (31-dic-2023), igual que run_daily.py.
 """
-# Última actualización: 2026-10-25 22:04 (hora de Chile) — precio en pesos (cierre, movimiento del dólar, gráfico con compras y ventas, PnL en pesos), separado del resultado en %
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — la barra lateral muestra la huella de la base leída
 import datetime as dt
 import sys
 from pathlib import Path
@@ -101,6 +101,11 @@ def base(mtime):
     """Base completa recortada a la fecha tope (el recorte se hace ANTES de usarla)."""
     x = datos.cargar_base()
     return x[x.index <= fecha_tope()]
+
+
+@st.cache_data(show_spinner=False)
+def huella_base(mtime):
+    return datos.huella_archivo()
 
 
 @st.cache_data(show_spinner=False)
@@ -273,5 +278,6 @@ def barra_lateral():
             "Nocional por unidad (USD)", min_value=10_000, step=100_000, value=st.session_state.get("nocional", 1_000_000),
             format="%d", help="Para expresar resultados y riesgo en pesos. Una exposición de +3 equivale a 3 veces este nocional. "
                               "Las cifras del torneo siguen en % del nocional.")
-        st.caption(f"Base: `{Path(C.ARCHIVO_BASE).name}` · última fecha visible {fecha_txt(x.index.max())}")
+        st.caption(f"Base: `{Path(C.ARCHIVO_BASE).name}` (huella `{huella_base(mtime_base())}`) · "
+                   f"última fecha visible {fecha_txt(x.index.max())}")
         st.caption(f"Huella del código: `{run_daily.huella_codigo()}`")

@@ -131,12 +131,12 @@ app.appendChild($(`<header>
 const al = [];
 if(!live) al.push(['warn',`Simulación: la fecha de decisión es anterior al monitoreo (${fdate(M.inicio_monitoreo)} – ${fdate(M.fin_monitoreo)}). El «seguimiento» parte el ${fdate(M.desde)}.`]);
 if(M.candado) al.push(['info',`Candado activo hasta el congelamiento (${fdate(M.congelamiento)}): solo se aceptan fechas hasta 2023.`]);
-if(S.avisos) al.push(['bad',`Series sin cierre en la fecha de decisión: ${S.avisos}. La señal NY usa el último dato disponible (hasta 3 jornadas).`]);
+if(S.avisos) al.push(['bad',`Atención: ${S.avisos}. Si falta el cierre de una serie de la señal NY, se usa su último dato disponible (hasta 3 jornadas).`]);
 const atr = D.datos.filter(d=>d.estado!=='ok');
 if(atr.length) al.push(['warn',`Datos atrasados o faltantes: ${atr.map(d=>d.serie).join(', ')}. Ver «Estado de los datos».`]);
 const dif = D.historial.filter(h=>h.coincide===false);
 if(dif.length) al.push(['bad',`La exposición reconstruida hoy difiere de la registrada en ${dif.length} jornada(s) (${dif.map(h=>fdate(h.fecha)).join(', ')}). Posible revisión de datos en la base: revisar antes de operar.`]);
-if(S.fecha_decision!==S.ultima_fecha_base) al.push(['info',`La base llega hasta el ${fdate(S.ultima_fecha_base)}; esta decisión usa datos hasta el ${fdate(S.fecha_decision)}.`]);
+if(S.fecha_decision!==S.ultima_fecha_base) al.push(['info',`La base (${S.archivo_base||M.base_archivo}) tiene cierres del USD/CLP hasta el ${fdate(S.ultima_fecha_base)}; esta decisión usa datos hasta el ${fdate(S.fecha_decision)}.`]);
 if(al.length){const box=$(`<div class="alerts"></div>`);al.forEach(([c,t])=>box.appendChild($(`<div class="alert ${c}">${t}</div>`)));app.appendChild(box);}
 
 // ---------- señal del día ----------
@@ -251,16 +251,18 @@ app.appendChild(hs);
 
 // ---------- datos y huella ----------
 const dh = $(`<section class="grid g-2" style="margin-top:16px"></section>`);
-const de = $(`<div class="panel"><h2>Estado de los datos<span class="sub">${M.base_archivo} · modificada ${M.base_modificada||'—'}</span></h2><div class="scroll"><table><thead><tr><th>Serie</th><th class="l" style="min-width:190px">Uso</th><th>Último dato</th><th>Atraso (días)</th><th>Estado</th></tr></thead><tbody></tbody></table></div>
+const de = $(`<div class="panel"><h2>Estado de los datos<span class="sub">${M.base_archivo} · último cierre USD/CLP ${fdate(S.ultima_fecha_base)} · modificada ${M.base_modificada||'—'}</span></h2><div class="scroll"><table><thead><tr><th>Serie</th><th class="l" style="min-width:190px">Uso</th><th>Último dato</th><th>Atraso (días)</th><th>Estado</th></tr></thead><tbody></tbody></table></div>
   <div class="note">Atraso en días corridos respecto de la fecha de decisión. Las tasas toleran algunos días (se usa el último valor publicado). Insumos de hoy: señal NY ${sg(D.insumos.ny,3)}, r<sub>CLP</sub> ${sg(D.insumos.r_clp,3)}, E|r|<sub>60</sub> ${nf(D.insumos.abs_r_60*1e4,1)} pb, σ<sub>60</sub> ${nf(D.insumos.sd_r_60*1e4,1)} pb, spot $${nf(D.insumos.spot,2)}.</div></div>`);
 D.datos.forEach(d=>de.querySelector('tbody').appendChild($(`<tr><td>${d.serie}</td><td class="l" style="white-space:normal;color:var(--ink2)">${d.papel}</td><td>${d.ultima?fdate(d.ultima):'—'}</td><td>${d.atraso??'—'}</td><td><span class="badge ${d.estado==='ok'?'b-ok':d.estado==='falta'?'b-bad':'b-warn'}">${d.estado==='ok'?'al día':d.estado}</span></td></tr>`)));
 dh.appendChild(de);
-const hu = $(`<div class="panel"><h2>Huella del código<span class="sub">versión con que se emitió esta señal</span></h2>
-  <div class="kv" style="margin-top:0"><div><div class="k">Huella (SHA-256)</div><div class="v mono" style="font-size:15px">${S.huella_codigo}</div></div>
+const hu = $(`<div class="panel"><h2>Huellas<span class="sub">versión del código y de la base con que se emitió esta señal</span></h2>
+  <div class="kv" style="margin-top:0"><div><div class="k">Huella del código</div><div class="v mono" style="font-size:15px">${S.huella_codigo}</div></div>
+  <div><div class="k">Huella de la base</div><div class="v mono" style="font-size:15px">${S.huella_base||'—'}</div></div>
+  <div><div class="k">Huella de los datos</div><div class="v mono" style="font-size:15px">${S.huella_datos||'—'}</div></div>
   <div><div class="k">Congelamiento</div><div class="v" style="font-size:15px">${fdate(M.congelamiento)}</div></div>
   <div><div class="k">Monitoreo</div><div class="v" style="font-size:15px">${fdate(M.inicio_monitoreo).replace(/ \d{4}$/,'')} – ${fdate(M.fin_monitoreo)}</div></div></div>
   <div class="scroll" style="margin-top:12px"><table><thead><tr><th>Archivo</th><th class="l">Última actualización</th></tr></thead><tbody></tbody></table></div>
-  <div class="note">${M.modelo}. Variables: ${M.variables.join(', ')}. La huella cambia si cambia cualquier archivo de src/ o run_daily.py: si difiere de la del registro, la señal se emitió con otra versión.</div></div>`);
+  <div class="note">${M.modelo}. Variables: ${M.variables.join(', ')}. La huella del código cambia si cambia cualquier archivo de src/ o run_daily.py. La huella de la base identifica el Excel leído (cambia con cada envío del laboratorio); la huella de los datos resume solo las series que usa el modelo hasta la fecha de decisión: si coincide entre dos bases, la señal de ese día tiene que ser la misma.</div></div>`);
 M.sellos.forEach(s=>hu.querySelector('tbody').appendChild($(`<tr><td class="mono">${s.archivo}</td><td class="l" style="white-space:normal;color:var(--ink2)">${s.sello}</td></tr>`)));
 dh.appendChild(hu);
 app.appendChild(dh);

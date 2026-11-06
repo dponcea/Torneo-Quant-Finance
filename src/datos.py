@@ -3,17 +3,57 @@
 Regla de oro: cada variable de la fila t usa solo información disponible al
 cierre de la jornada t. La variable objetivo es lo único que mira t+1.
 """
-# Última actualización: 2026-10-21 21:54 (hora de Chile) — E13: rex_ap_ap paga el carry de t+1 a t+2 (antes desfasado un día) y excluye huecos de t+1 a t+2
+# Última actualización: 2026-11-06 17:46 (hora de Chile) — cargar_base se detiene con un mensaje claro si falta la base; huellas del archivo y de los datos que usa el modelo; última jornada del USD/CLP en la base
+import hashlib
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
 from . import config as C
 
 
-def cargar_base(ruta=C.ARCHIVO_BASE):
-    """Lee la hoja 'datos' del Excel del laboratorio (formato ancho)."""
+def cargar_base(ruta=None):
+    """Lee la hoja 'datos' del Excel del laboratorio (formato ancho).
+
+    Usa C.ARCHIVO_BASE (nombre exacto). Si el archivo no existe se detiene: nunca se lee otra base."""
+    ruta = Path(ruta) if ruta else C.ARCHIVO_BASE
+    if not ruta.exists():
+        raise FileNotFoundError(
+            f"No encuentro la base del laboratorio en {ruta}.\n"
+            f"Guarda la última base que envió el laboratorio en data/ con el nombre exacto "
+            f"{C.NOMBRE_BASE} (reemplazando la anterior), o define la variable de entorno "
+            f"TORNEO_BASE con la ruta completa del archivo.")
     x = pd.read_excel(ruta, sheet_name="datos").set_index("fecha").sort_index()
     return x
+
+
+# Columnas de la base que entran al modelo M1 y a su evaluación (objetivo, carry y señal NY).
+def columnas_modelo():
+    usd = [f"USDCLP Curncy|{c}" for c in ("PX_OPEN", "PX_HIGH", "PX_LOW", "PX_LAST")]
+    tasas_ = ["CLICP Index|PX_LAST", "CHOVCHOV Index|PX_LAST", "FEDL01 Index|PX_LAST"]
+    ny = [f"{t}|PX_LAST" for t in C.PARES_NY]
+    return usd + tasas_ + ny
+
+
+def ultima_jornada(x):
+    """Última fecha de la base con cierre del USD/CLP (la base trae también fines de semana por la UF)."""
+    return x["USDCLP Curncy|PX_LAST"].last_valid_index()
+
+
+def huella_archivo(ruta=None):
+    """SHA-256 (10 caracteres) del Excel leído: identifica qué versión de la base se usó."""
+    ruta = Path(ruta) if ruta else C.ARCHIVO_BASE
+    return hashlib.sha256(ruta.read_bytes()).hexdigest()[:10]
+
+
+def huella_datos(x, hasta):
+    """SHA-256 (10 caracteres) de los datos que usa el modelo hasta `hasta` (incluido).
+
+    Si dos bases dan la misma huella de datos para una fecha, la señal de esa fecha tiene que
+    ser idéntica: las revisiones de series que el modelo no usa (flujos, macro) no la cambian."""
+    d = x.loc[x.index <= pd.Timestamp(hasta), columnas_modelo()]
+    return hashlib.sha256(d.to_csv(float_format="%.10g").encode("utf-8")).hexdigest()[:10]
 
 
 def _px(x, ticker, campo="PX_LAST"):

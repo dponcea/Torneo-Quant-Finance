@@ -39,9 +39,9 @@ fecha
 2023        257          1.9               0.8
 2024        251          0.8               0.4
 2025        250          0.8               0.0
-2026        195          1.0               0.0
+2026        217          0.9               0.0
 
-[2] Días hábiles sin cotización desde 2004: 298
+[2] Días hábiles sin cotización desde 2004: 299
 2006      3
 2007      6
 2008      7
@@ -62,7 +62,7 @@ fecha
 2023      3
 2024     11
 2025     11
-2026      4
+2026      5
 
 [3] Dólar observado: corr(Δobservado_t, Δspot_t+k)
    k=-2: 0.393
@@ -71,10 +71,10 @@ fecha
    k=+1: 0.009
    k=+2: 0.004
 
-[4] Cámara overnight (desde ICP) vs TPM: diferencia media -0.014 pp; días negativos: [datetime.date(2004, 2, 26), datetime.date(2004, 12, 7)]
-    Sin dividir por días: lunes 12.39% vs martes 4.81%
+[4] Cámara overnight (desde ICP) vs TPM: diferencia media -0.017 pp; días negativos: [datetime.date(2004, 2, 26), datetime.date(2004, 12, 7)]
+    Sin dividir por días: lunes 11.85% vs martes 4.70%
 [5] CHON último 3.5 (real) + UF a/a 3.55% ≈ TPM inicial 6.5 (nominal)
-[6] SOFR − Fed Funds: media -0.2 pb; p95 |dif| 9.0 pb
+[6] SOFR − Fed Funds: media -0.9 pb; p95 |dif| 8.0 pb
 
 [7] Flujos BCCh
    CLPBODMB Index vs CLPBODM Index: traslape 291 días, corr nivel 0.998, corr Δ 0.840, diferencia media -7
