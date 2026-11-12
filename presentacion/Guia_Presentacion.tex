@@ -1,0 +1,136 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{enumitem,booktabs,tabularx,xcolor}
+\setlist{itemsep=2pt,topsep=3pt}
+\definecolor{azul}{RGB}{31,78,121}
+\newcommand{\fuera}{\textcolor{red!60!black}{\textbf{[fuera del material]}}}
+\newcommand{\apunta}[1]{\textcolor{azul}{\emph{Apuntar:} #1}}
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt}
+\title{Guía de la presentación final\\\large Torneo Itaú--FEN · ¿Sube o baja el dólar mañana?}
+\author{Diego Ponce y Simón Canales}
+\date{Borrador del 6 de noviembre de 2026}
+\begin{document}
+\maketitle
+
+\textbf{Supuestos de esta guía} \fuera: duración de unos 10 minutos (12 diapositivas, \(\approx\)50 segundos cada una); Diego presenta las diapositivas 1 a 6 y Simón las 7 a 12. Las referencias (tabla, ecuación, página) son del informe compilado el 6 de noviembre (37 páginas). Lo marcado \fuera\ no está en el informe: son analogías o supuestos nuestros.
+
+\section{Las ideas fuerza}
+\begin{enumerate}
+\item \textbf{Lo que pasa en Nueva York después de que cierra Chile anticipaba el dólar del día siguiente, pero esa ventaja se fue apagando hasta desaparecer.} (Tabla 12, p.~23)
+\item \textbf{Como congelamos el modelo antes de mirar los datos de prueba, el resultado, aunque negativo, es creíble.} (Sección 5.5, p.~15; Tabla 17, p.~34)
+\item \textbf{Saber cuándo no apostar fue lo que mejor resistió.} (Tabla 9, p.~21; Tabla 11, p.~23)
+\end{enumerate}
+
+\section{La explicación en tres niveles}
+
+\subsection*{Parte de Diego (diapositivas 1--6): la señal, la apuesta y el método}
+\textbf{(a) Cómo se construye.}
+\begin{itemize}
+\item \emph{Qué se predice.} El retorno en exceso de carry: el alza del dólar menos el diferencial de tasas (ecuación 1, p.~11). Se predice si es positivo, \(y_{t+1}=\mathbf{1}\{r^{ex}_{t+1}>0\}\).
+\item \emph{La señal NY.} Promedio de los retornos del peso mexicano, el rand, el real, el DXY, el euro y el S\&P~500 (los dos últimos con signo invertido), cada uno dividido por su volatilidad de 250 días. Esas series cierran en Nueva York, horas después del peso (Tabla 2, p.~9).
+\item \emph{El modelo.} Un logit con la señal NY y el retorno del día del propio peso (ecuación 2, p.~11, modelo M1). Se calibra con Platt (ecuación 3, p.~12).
+\item \emph{La apuesta.} La probabilidad se convierte en retorno esperado \(\mu=(2p-1)\,\mathbb{E}|r^{ex}|_{60}\) (ecuación 4, p.~12), y la regla de Kelly fraccional elige la exposición que maximiza la ganancia esperada descontando riesgo y costo (ecuación 5, p.~12), con \(c=\tfrac14\) y costo de 2 pb.
+\item \emph{El método.} \emph{Walk-forward} anual: cada año se predice con un modelo estimado solo con años anteriores (Sección 4.3, p.~11). Tramos: estimación 2004--2009, fuera de muestra 2010--2019, validación 2020--2023, prueba 2024--2026 (Tabla 1, p.~8).
+\item \emph{Validación.} 12,1\% anual neto, Sharpe 0,92, pérdida máxima 10\% (Tabla 7, p.~19). Frente a no operar, \(p=0{,}012\); frente a comprar siempre, \(p=0{,}082\) (Tabla 8, p.~20).
+\end{itemize}
+\textbf{(b) En fácil.} El mercado chileno cierra a las 13:30, pero Nueva York sigue operando hasta las 18:00 o 19:00. Si en esas horas el dólar se fortalece en el mundo, es probable que el peso lo refleje al abrir al día siguiente. Medimos cuán probable es eso y apostamos más cuando estamos más seguros, y nada cuando la ventaja no alcanza a pagar el riesgo y el costo.
+\emph{Analogía} \fuera: es como enterarse del resultado del primer tiempo de un partido cuando la casa de apuestas local ya cerró. Mañana abrirá con las cuotas ajustadas, pero hoy uno ya sabe hacia dónde se mueven. Y como un buen jugador de póker, uno apuesta fuerte solo con buena mano y se retira cuando la mano no paga la entrada.
+
+\textbf{(c) Conexión con las ideas fuerza.} La diapositiva 3 presenta la fuente de la ventaja (idea 1), la 4 explica por qué la regla sabe no apostar (idea 3) y la 5 explica por qué el resultado es creíble (idea 2). La 6 muestra que la ventaja existió.
+
+\subsection*{Parte de Simón (diapositivas 7--12): el resultado, por qué falló y qué aprendimos}
+\textbf{(a) Cómo se construye.}
+\begin{itemize}
+\item \emph{Prueba.} 716 jornadas, del 2 de enero de 2024 al 5 de noviembre de 2026, corridas una sola vez el 6 de noviembre con el código etiquetado \texttt{v0.9-congelado} (Sección 6.2, p.~21). Resultado: $-5{,}1$\% anual, Sharpe $-0{,}54$; comprar siempre, $+2{,}7$\% (Tabla 9, p.~21). Clark-West \(p=0{,}52\). Ninguna diferencia frente a las referencias es significativa (Tabla 10, p.~21).
+\item \emph{Deterioro.} Correlación de la señal con el día siguiente: 0,16 (2004--2012), 0,11 (2013--2019), 0,05 (2020--2023) y $-0{,}02$ (2024--2026) (Tabla 12, p.~23).
+\item \emph{No fue mala suerte.} Con un Sharpe verdadero de 0,9, la probabilidad de observar $-0{,}54$ o menos en 716 jornadas es de alrededor de 1\% (Sección 9, p.~31; es un cálculo nuestro con aproximación normal).
+\item \emph{Alertas previas.} DSR de validación 0,65 (p.~20); ventaja concentrada en el tramo nocturno (Tabla 14, p.~25); E15, entrenado desde 2013, $-0{,}2$\% en validación (p.~23).
+\item \emph{Lo que resistió.} Sin posición el 54\% de los días; exposición máxima solo 13 días; la regla pierde $-5{,}1$\% frente a $-8{,}9$\% de la señal con tamaño fijo (Tabla 9). La pérdida vino de los días con exposición 1: $-15{,}6$\% neto acumulado (Tabla 11, p.~23).
+\end{itemize}
+\textbf{(b) En fácil.} El atajo existía, pero se fue cerrando. Medimos que se debilitaba antes de rendir la prueba, y la prueba lo confirmó: en los últimos tres años la señal ya no dice nada. Como la regla apostaba poco cuando no estaba segura, perdimos menos que si hubiéramos apostado todos los días.
+\emph{Analogía} \fuera: un atajo que descubren muchos conductores deja de ser atajo, porque se llena de autos. Una regularidad de mercado simple y conocida tiende a desaparecer cuando muchos la explotan (hipótesis del informe, p.~23, citando a Rossi, 2013).
+
+\textbf{(c) Conexión con las ideas fuerza.} Las diapositivas 7 y 8 son la idea 1, la 9 es la idea 2 (el proceso detectó el problema) y la 10 es la idea 3. La 11 y la 12 cierran.
+
+\section{Diapositivas: qué va en cada una}
+\begin{tabularx}{\textwidth}{@{}c l X c@{}}
+\toprule
+N.º & Quién & Contenido & Tiempo \\ \midrule
+1 & Diego & Título & 15 s \\
+2 & Diego & La pregunta y qué cuenta como ganar & 50 s \\
+3 & Diego & Diagrama de horarios: la idea (idea 1) & 60 s \\
+4 & Diego & Señal \(\to\) probabilidad \(\to\) tamaño (idea 3) & 60 s \\
+5 & Diego & Línea de tiempo: examen único (idea 2) & 50 s \\
+6 & Diego & Validación: tres cifras y dos p-valores & 45 s \\
+7 & Simón & Curva de la prueba: perdimos & 50 s \\
+8 & Simón & Gráfico del deterioro (idea 1) & 50 s \\
+9 & Simón & No fue mala suerte; alertas previas (idea 2) & 50 s \\
+10 & Simón & Saber cuándo no apostar (idea 3) & 45 s \\
+11 & Simón & Qué haríamos distinto y monitoreo & 40 s \\
+12 & Simón & Las tres ideas y cierre & 25 s \\ \bottomrule
+\end{tabularx}
+
+El código está en \texttt{Presentacion\_Torneo\_USDCLP.tex}, junto con \texttt{fig5\_curva\_prueba.pdf} y \texttt{deterioro.pdf}.
+
+\section{Guion por diapositiva}
+\emph{Para decir con tus palabras, no para leer.}
+
+\textbf{1. Título (Diego).} «Buenos días. Somos Diego y Simón. Les vamos a contar cómo encontramos una forma de anticipar el dólar\ldots{} y cómo se nos agotó.» \apunta{el subtítulo.}
+
+\textbf{2. La pregunta (Diego).} «Cada día había que decidir: comprar dólares, venderlos o quedarse fuera, con distintos tamaños. Y ganar no es solo acertar si sube: hay que subir más que el carry, que es lo que cuesta tener la posición, y pagar los costos. Además, hay que ganarle a tres alternativas simples.» \apunta{«más que el carry».} \emph{Transición:} «¿De dónde podía venir una ventaja?»
+
+\textbf{3. La idea (Diego).} «Chile cierra a las 13:30. Nueva York sigue operando hasta las seis o siete de la tarde. En esas horas se mueven el peso mexicano, el real, el euro, el S\&P. El peso chileno recién reacciona al día siguiente. Esa diferencia de horario es nuestra señal. El torneo supone que todo cierra a la misma hora, y lo declaramos como supuesto.» \apunta{la franja azul entre 13:30 y 18:00.}
+
+\textbf{4. De la señal a la apuesta (Diego).} «Con la señal estimamos la probabilidad de que el dólar suba. Si estamos más seguros, apostamos más; si la ventaja no paga el riesgo ni el costo, no apostamos. Ese ``no apostar'' va a ser importante al final.» \apunta{la tercera caja y la viñeta.}
+
+\textbf{5. El método (Diego).} «Para no engañarnos usamos una regla de examen: cada año se predice solo con el pasado, elegimos el modelo con 2020 a 2023, y la prueba de 2024 a 2026 se corrió una sola vez, con el modelo congelado y registrado en GitHub antes de mirar. Anotamos 15 experimentos, también los que descartamos.» \apunta{el bloque rojo.}
+
+\textbf{6. Validación (Diego).} «Hasta 2023 funcionaba: 12\% anual neto, Sharpe 0,92, y una pérdida máxima de 10\% frente a 35\% de comprar dólares. Le ganaba a no operar con significancia; a comprar siempre, por mucho, pero sin significancia.» \apunta{el 12,1\%.} \emph{Transición:} «Con eso congelamos el modelo y rendimos el examen. Simón les cuenta qué pasó.»
+
+\textbf{7. La prueba (Simón).} «En la prueba perdimos plata: 5\% al año, mientras comprar dólares ganaba casi 3\%. Y la señal dejó de anticipar la dirección.» \apunta{la línea azul bajando desde 2025.} \emph{Transición:} «¿Por qué?»
+
+\textbf{8. El deterioro (Simón).} «Esta es la correlación entre nuestra señal y el dólar del día siguiente, por período. Era 0,16, bajó a 0,11, a 0,05 y en la prueba es cero. La ventaja no desapareció de golpe: se fue apagando.» \apunta{las barras de izquierda a derecha, y la roja.}
+
+\textbf{9. No fue mala suerte (Simón).} «Si la ventaja de validación siguiera, un resultado así tendría cerca de 1\% de probabilidad. Y lo más importante: había alertas registradas antes de la prueba. Entrenado solo desde 2013, el modelo ya no ganaba. El proceso nos lo mostró antes.» \apunta{«antes de mirar».}
+
+\textbf{10. No apostar (Simón).} «Lo que mejor resistió fue saber cuándo no apostar: estuvimos fuera la mitad de los días y usamos la apuesta máxima solo 13 veces. Perdimos 5\%, contra casi 9\% si hubiéramos apostado todos los días.» \apunta{el 54\%.}
+
+\textbf{11. Qué haríamos distinto (Simón).} «Tres cosas: una regla de apagado fijada de antemano, precios tomados a una misma hora y mirar el mercado \emph{offshore}. Y para el monitoreo en vivo esperamos un resultado cercano a cero: con la señal agotada, tres semanas son azar.» \apunta{«fijada antes».}
+
+\textbf{12. Resumen (Simón).} Leer las tres ideas con calma. «Gracias. Quedamos atentos a sus preguntas.»
+
+\section{Preguntas probables}
+\begin{enumerate}[leftmargin=*]
+\item \textbf{¿Por qué no cambiaron el modelo si vieron que perdía?} Porque cualquier cambio elegido mirando la prueba sería sobreajuste, y no habría datos limpios para evaluarlo, salvo tres semanas de monitoreo (p.~23).
+\item \textbf{¿La señal NY no es ``trampa'', si se observa después del cierre chileno?} Las bases y el laboratorio indican suponer un cierre común; lo declaramos como la principal fuente de \emph{leakage} y reportamos la ejecución a la apertura (Sección 7.6, p.~29; Tabla 14, p.~25).
+\item \textbf{¿Con ejecución a la apertura gana?} En validación sí, 10,6\% anual; en 2011--2019 pierde ($-13{,}4$\%) y en la prueba también ($-5{,}5$\%) (Tabla 14; Sección 6.2).
+\item \textbf{¿Por qué un logit y no machine learning?} Con una señal débil y pocas variables útiles, un modelo flexible sobreajusta; el logit es interpretable y se calibra bien. LightGBM se descartó por diseño (Sección 4.2, p.~11; Tabla 19).
+\item \textbf{¿Probaron el cobre?} Sí, prerregistrado: no agrega información una vez incluida la señal NY (Clark-West \(p=0{,}55\) en validación; Tabla 6, p.~17).
+\item \textbf{¿Qué costo asumieron?} 2 pb por unidad, cercano a medio spread de 40 centavos que nos indicó el laboratorio; en validación la estrategia toleraba entre 9 y 13 pb (Sección 7.4, p.~26).
+\item \textbf{¿Por qué se agotó la señal?} No lo contrastamos; dos hipótesis: el mercado aprendió y la arbitró, o el precio se forma ahora antes de la apertura, en el mercado \emph{offshore} (p.~23).
+\item \textbf{¿Cómo trataron los huecos de 2011--2012?} Excluimos los retornos que cruzan más de 6 días; sin ese tramo el modelo decide igual el 96\% de los días (Tabla 18, p.~35).
+\item \textbf{¿Y los valores extremos?} No winsorizamos: los días de señal extrema eran informativos y la regla ya reduce el tamaño cuando sube la volatilidad (Tabla 18).
+\item \textbf{¿Qué es el Deflated Sharpe Ratio?} La probabilidad de que el Sharpe refleje habilidad y no la suerte de haber probado muchas variantes; en validación era 0,65, bajo el 0,95 habitual (p.~20).
+\item \textbf{¿Qué esperan del monitoreo?} Un resultado cercano a cero, dominado por el azar: en tres semanas una estrategia sin ventaja puede ganar o perder dos o tres puntos (Sección 8, p.~30).
+\item \textbf{Limitaciones que conviene reconocer antes de que las pregunten:} el supuesto de cierre común, el costo supuesto, las hipótesis sin contrastar y lo corto de la prueba (Sección 9, p.~31).
+\end{enumerate}
+
+\section{Revisión con los 9 principios}
+\begin{enumerate}[leftmargin=*]
+\item \emph{Fácil antes que técnico:} se cumple; las fórmulas no aparecen en las diapositivas, solo en esta guía. Riesgo: «carry» y «Sharpe» pueden necesitar una frase de explicación para el público no técnico.
+\item \emph{1--3 ideas fuerza:} tres, y la diapositiva 12 las repite.
+\item \emph{Porqué antes del cómo:} la 3 (porqué) va antes que la 4 y la 5 (cómo).
+\item \emph{Analogías:} están en el guion (partido, póker, atajo), no en las diapositivas. Son nuestras, no del material.
+\item \emph{Lo que importa a la audiencia:} retorno, riesgo (pérdida máxima) y costo aparecen en las diapositivas 2, 6, 7 y 10.
+\item \emph{Poco texto:} entre 3 y 4 viñetas por diapositiva. La 9 es la más cargada.
+\item \emph{Ejemplos de palabra:} sí, salvo los gráficos centrales (7 y 8).
+\item \emph{Conectar con lo conocido:} se podría mencionar la tesis de David sobre el S\&P~500 (González Cañón, 2026), que el jurado conoce.
+\item \emph{Títulos conectados con las ideas fuerza:} sí en 3, 5, 8, 9 y 10.
+\end{enumerate}
+\textbf{Qué cambiaría:} (i) acortar la diapositiva 9 a dos viñetas y decir la tercera alerta de palabra; (ii) agregar en el guion de la 2 una frase que defina el carry («lo que cuesta mantener la posición»); (iii) en la 6, mencionar de palabra la conexión con la tesis de David; (iv) ensayar los tiempos: los 10 minutos son un supuesto nuestro y hay que confirmar la duración con Claudia o David.
+\end{document}

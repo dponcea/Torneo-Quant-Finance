@@ -1,0 +1,131 @@
+% =====================================================================
+% Resumen ejecutivo · Torneo «¿Sube o baja el dólar mañana?» (Itaú–FEN)
+% Versión breve del informe (3 páginas) para la entrega del 12-nov-2026.
+% El informe completo es informe/Informe_Torneo_USDCLP.tex. Compilar con PDFLaTeX dos veces.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+\usepackage{microtype}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{setspace}\setstretch{1.1}
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\itshape Predicción direccional del USD/CLP — resumen ejecutivo}
+\fancyhead[R]{\small\itshape Torneo Itaú--FEN 2026}
+\fancyfoot[C]{\small\thepage}
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\normalsize\bfseries\scshape}{\thesection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.6ex plus .5ex}{0.6ex}
+\usepackage{amsmath}
+\usepackage{booktabs,tabularx,threeparttable}
+\usepackage{enumitem}\setlist{nosep,leftmargin=1.4em}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\newcommand{\rex}{r^{\text{ex}}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\begin{document}
+
+\begin{center}
+{\large\bfseries ¿Sube o baja el dólar mañana?\par}
+{\small\itshape Predicción direccional del USD/CLP con información de cierre asíncrono y una regla de exposición de Kelly fraccional\par}
+\vspace{2pt}
+{\small Diego Ponce \,·\, Simón Canales \quad — \quad Facultad de Economía y Negocios, Universidad de Chile \quad — \quad 12 de noviembre de 2026\par}
+\vspace{2pt}
+{\footnotesize Resumen ejecutivo del informe completo (\texttt{informe/Informe\_Torneo\_USDCLP.pdf}, 40 páginas). Repositorio con código, notebook y resultados en GitHub; el \texttt{README.md} indica cómo clonarlo y correrlo.\par}
+\end{center}
+\vspace{-2pt}\hrule\vspace{4pt}
+
+\textbf{En una frase.} Una estrategia que usa lo que ocurre en Nueva York después del cierre del mercado cambiario chileno para decidir, cada día, una exposición en $\{-3,-1,0,+1,+3\}$ sobre el USD/CLP, ganó 12,1\,\% anual neto de carry y costos en 2020--2023 (Sharpe 0,92) y perdió 5,1\,\% anual en el tramo de prueba 2024--2026 (Sharpe $-0{,}54$), evaluado una sola vez con el modelo congelado. La señal que explotaba se fue agotando y hoy no tiene contenido; no modificamos el modelo después de verlo, y es el que opera en el monitoreo.
+
+\section{Qué hace la estrategia y por qué}
+
+\textbf{Idea.} El USD/CLP cierra en Santiago cerca de las 13:30; el peso mexicano, el rand, el real, el índice del dólar, el euro y el S\&P~500 siguen transándose en Nueva York varias horas más. Si el peso comparte un factor común con esas monedas, lo que pasa en esas horas debería reflejarse en el peso al día siguiente (\emph{nonsynchronous trading}, Lo y MacKinlay 1990). Es un efecto conocido por las mesas de dinero; lo que medimos es cuánto vale en dinero, neto de carry y costos, y si sobrevive fuera de muestra.
+
+\textbf{Variable objetivo.} $y_{t+1}=\mathbf 1\{\rex_{t+1}>0\}$, con $\rex_{t+1}=\ln(S_{t+1}/S_t)-\tfrac{d_t}{360}(i^{\text{CLP}}_t-i^{\text{USD}}_{t-1})$: si mañana conviene estar comprado en dólares una vez pagado el diferencial de tasas (tasa de cámara menos Fed Funds). Descontar el carry elimina además la tendencia nominal a la depreciación del peso, de modo que se predice algo cercano a un proceso estacionario.
+
+\textbf{Modelo (M1).} Logit con dos variables: la \emph{señal NY} (promedio de los seis retornos de Nueva York del día $t$, cada uno normalizado por su volatilidad de 250 días, con el euro y el S\&P con signo cambiado) y el retorno del propio USD/CLP del día. Se estima \emph{walk-forward} por año calendario con jornadas anteriores al 1 de enero (embargo de 5 jornadas), promediando una ventana expansiva desde 2004 y una móvil de 1.250 jornadas; la probabilidad se calibra con Platt usando solo predicciones fuera de muestra de años anteriores. \textbf{La señal es única}: la combinación de ventanas está fijada de antemano y produce una sola probabilidad diaria.
+
+\textbf{Modelos descartados y por qué.} Un logit más grande con carry, volatilidad emergente y su interacción (M2) y otro con cobre (M1C) no superan a M1 fuera de muestra (Clark-West, $p=0{,}68$ y $0{,}55$): una vez incluida la señal NY, no encontramos información adicional a un día en esas variables. Boosting, redes y momentum se descartaron por diseño antes de ver resultados: con 250 jornadas al año y una relación débil, la varianza de estimación es el enemigo, y cada modelo probado sube la penalización por \emph{data snooping}. El cambio de régimen, sugerido en la segunda mentoría, queda como extensión (\S6).
+
+\textbf{Regla de exposición.} Kelly fraccional discreto con costo:
+\[
+k_t=\argmax_{k\in\{-3,-1,0,1,3\}}\; k\,\mu_t-\frac{k^2\sigma_t^2}{2c}-\kappa\,|k-k_{t-1}|,\qquad
+\mu_t=(2p_t-1)\,\mathbb E|\rex|_{60},\; c=\tfrac14,\; \kappa=2\text{ pb}.
+\]
+La exposición máxima solo se toma cuando la ventaja es grande frente a la volatilidad reciente ($\sigma_t$, 60 jornadas); $k=0$ aparece solo cuando la ventaja no paga el riesgo y el costo; el término $\kappa|k-k_{t-1}|$ es un castigo a la señal que impide ejecutar señales débiles.
+
+\section{Datos y limpieza}
+
+Base del Laboratorio Bloomberg FEN, diaria, 1990 a 6-nov-2026; usamos 2004 en adelante (antes el OHLC del USD/CLP no tiene contenido: máximo = mínimo todos los días). Decisiones principales: (i) los retornos que cruzan más de 6 días corridos en los huecos de 2011--2012 se excluyen, no se rellenan; (ii) el dólar observado no se usa (es el spot del día anterior); (iii) el cobre COMEX se limpia de saltos de contrato con el LME; (iv) las series desactualizadas (LIBOR, IPSA, bonos en pesos, series chinas) se excluyen; (v) la tasa de cámara se calcula por días corridos para que el lunes no triplique la tasa; (vi) una prueba automática verifica que ninguna variable usa información futura (diferencia exactamente cero al truncar la base). Supuesto clave, indicado por el laboratorio: \textbf{todas las series cierran el mismo día a la misma hora}. Es la principal fuente de \emph{leakage} del estudio y por eso reportamos también la ejecución a la apertura del día siguiente.
+
+\section{Resultados y cómo los testeamos}
+
+\textbf{Tramos.} 2004--2009 solo estimación; 2010--2019 fuera de muestra (calibración y diagnóstico); \textbf{2020--2023 validación}, con la que elegimos modelo y regla; \textbf{2024--2026 prueba}, abierta una sola vez el 6-nov-2026 con el código etiquetado \texttt{v0.9-congelado}. La validación no es evidencia confirmatoria porque sirvió para seleccionar; la prueba sí.
+
+\begin{table}[h]\centering\footnotesize
+\begin{threeparttable}
+\begin{tabular}{l rr r}
+\toprule
+ & Validación & Prueba & Comprar siempre ($+1$) \\
+ & 2020--2023 & 2024--2026 & valid.\ / prueba \\
+\midrule
+Jornadas & 1.010 & 716 & --- \\
+Retorno neto anual (carry y costos) & 12,1\,\% & $-5{,}1$\,\% & 0,4\,\% / 2,7\,\% \\
+Volatilidad anual & 13,1\,\% & 9,6\,\% & 15,6\,\% / 12,4\,\% \\
+Sharpe & 0,92 & $-0{,}54$ & 0,02 / 0,21 \\
+Drawdown máximo & $-10{,}0$\,\% & $-21{,}4$\,\% & $-35{,}2$\,\% / $-18{,}6$\,\% \\
+Acierto en días con posición & 54,8\,\% & 47,6\,\% & 49\,\% / 50\,\% \\
+Operaciones (cambios de exposición) & 337 (84/año) & 207 (73/año) & --- \\
+Unidades transadas & 452 (113/año) & 280 (99/año) & --- \\
+Tiempo en el mercado & 45,7\,\% & 46,1\,\% & 100\,\% \\
+Días en $\pm3$ & 3,3\,\% & 1,8\,\% & --- \\
+Clark-West M1 frente a M0 ($p$) & 0,029 & 0,52 & --- \\
+Frente a no operar, bootstrap ($p$) & 0,012 & 0,85 & --- \\
+Frente a comprar siempre, bootstrap ($p$) & 0,082 & 0,81 & --- \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Convención del torneo (cierre a cierre), costo de 2 pb por unidad de cambio de exposición. Una operación es una jornada en que la exposición cambia; las unidades transadas suman $|\Delta k|$ y son la base del costo. Fuente: notebook, sección 6b, y \texttt{reports/prueba/}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\textbf{Tests.} Calidad del pronóstico con Brier, Clark-West (modelos anidados), Diebold-Mariano y Pesaran-Timmermann; valor económico con bootstrap estacionario pareado (10.000 réplicas, Holm para cuatro referencias) y \emph{Deflated Sharpe Ratio} con $N=48$ variantes probadas (también 100 y 200). Todos los ensayos están en \texttt{reports/registro\_experimentos.csv} (E01--E16), con la decisión que se tomó a partir de cada uno.
+
+\textbf{Robustez en validación.} Gana en los cuatro años; sin el primer semestre de 2020 el Sharpe es 1,00; quitando los 10 mejores y 10 peores días, 1,02; un placebo que sortea el signo de cada posición supera al observado en el 4\,\% de 1.000 sorteos. \textbf{Pero} el DSR era solo 0,65 (umbral habitual 0,95) y entrenar solo con datos desde 2013 eliminaba la ganancia ($-0{,}2$\,\%): la fragilidad quedó registrada antes de abrir la prueba (E15).
+
+\textbf{Por qué falló la prueba.} No fue mala suerte: con un Sharpe real de 0,9 la probabilidad de observar un Sharpe de $-0{,}54$ o menor en 716 jornadas es de alrededor de 1\,\%. La correlación entre la señal NY y el retorno del día siguiente cayó de 0,16 (2004--2012) a 0,11 (2013--2019), 0,05 (2020--2023) y $-0{,}02$ (2024--2026). Hipótesis no contrastadas: arbitraje de una regularidad conocida, traslado de la formación de precio al mercado \emph{offshore} de NDF, y un cambio de régimen del propio activo. La regla cumplió su función defensiva: se abstuvo el 54\,\% de los días y perdió menos que la misma señal con tamaño fijo ($-5{,}1$ frente a $-8{,}9$\,\%).
+
+\textbf{Costos y ejecución.} El costo de 2 pb es un supuesto (medio spread interbancario de 40 centavos). Con la referencia de 0,07\,\% ida y vuelta del laboratorio (3,5 pb por unidad): 10,4\,\% en validación, $-6{,}6$\,\% en la prueba. Costo de equilibrio en validación: 9--13 pb; con ejecución a la apertura de $t+1$ (el primer precio transable para quien decide tras el cierre de Nueva York): 10,6\,\% en validación, $-13{,}4$\,\% en 2011--2019 y $-5{,}5$\,\% en la prueba. Un inversionista institucional (6--8 pb) ganaba poco y de forma indistinguible de cero; un minorista no ganaba en ningún canal.
+
+\section{Mecanismo de ejecución (para replicar en el monitor)}
+
+Convención del torneo, \textbf{cierre a cierre, sin dólar observado}. Al cierre de la jornada $t$ se toman los cierres de $t$ de todas las series (los de Nueva York incluidos, por el supuesto de cierre común); se calcula la señal NY, $p_t$ calibrada, $\mu_t$ y $\sigma_t$, y la exposición $k_t$ con la fórmula de \S1. \textbf{Una operación la gatilla un cambio de $k_t$ respecto de $k_{t-1}$}: se transan $|k_t-k_{t-1}|$ unidades (1 unidad $\approx$ USD 1 millón) y cada una cuesta 2 pb; si no cambia, no hay operación ni costo. $k_t$ se liquida con $\rex_{t+1}$, el retorno en exceso de carry entre el cierre local de $t$ y el de $t+1$. Lo único que cambia día a día en el modelo congelado son las volatilidades de 60 y 250 jornadas y la regla de Kelly; los coeficientes y la calibración del año se estimaron con datos anteriores al 1 de enero de 2026. \texttt{python run\_daily.py -{}-pendientes} calcula la señal de cada jornada nueva de la base y la registra en \texttt{reports/senales\_diarias.csv} con la fecha de decisión, señal NY, $p$ bruta y calibrada, $\mu_t$, $\sigma_t$, exposición elegida y anterior, y las huellas del código y de los datos; \texttt{reports/tablero.html} muestra la utilidad de cada $k$.
+
+\section{Qué esperamos del monitoreo (13-nov a 1-dic)}
+
+Con la señal agotada, un resultado cercano a cero y dominado por el azar: en tres semanas una estrategia sin ventaja puede terminar con $\pm2$--3 puntos porcentuales sin que eso diga nada. Lo que sí debería mantenerse, porque depende de la regla y no de la señal, es el perfil: posición en cerca de la mitad de las jornadas, exposición de 1 casi siempre y $\pm3$ solo con señal extrema y baja volatilidad reciente. Un resultado positivo en el monitoreo no cambiaría nuestra conclusión, ni uno negativo la empeoraría.
+
+\section{Qué haríamos distinto}
+
+(1) Una regla de apagado prerregistrada que suspenda la estrategia cuando la capacidad predictiva reciente cae bajo un umbral; las señales estaban (correlación 0,05 ya en 2020--2023). (2) Un modelo de cambio de régimen (cadena de Markov de 2--3 estados) estimado antes del modelo direccional, precedido de un PCA de las series para interpretar factores (dólar global, tasas, \emph{risk-on/off}), como sugirió la segunda mentoría; nuestra señal NY es, en los hechos, una versión manual del primer componente. (3) Datos intradía a hora fija. (4) El mercado \emph{offshore} de NDF como lugar de ejecución. Todas requieren prerregistro y datos no vistos; 2024--2026 ya fue visto.
+
+\section{Dónde está cada cosa}
+
+\begin{itemize}
+\item \texttt{README.md}: cómo clonar y correr (dependencias, datos, comandos), supuestos, herramientas elegidas y descartadas, mecanismo de ejecución.
+\item \texttt{notebooks/01\_modelo\_nucleo.ipynb}: backtest completo, gráficos de la estrategia y sus retornos, estadísticas de trading (sección 6b), tests y robustez; 1--2 minutos en ejecutarse.
+\item \texttt{prueba.py} y \texttt{reports/prueba/}: la corrida única del tramo de prueba; \texttt{prueba.py -{}-ensayo} reproduce la validación.
+\item \texttt{run\_daily.py}, \texttt{tests/test\_run\_daily.py}: señal diaria del monitoreo y prueba de que reproduce el backtest exactamente.
+\item \texttt{reports/registro\_experimentos.csv}: los 16 análisis que miraron datos, con fecha, resultado y decisión.
+\item \texttt{informe/Informe\_Torneo\_USDCLP.pdf}: el informe completo, con literatura, tablas, figuras, bitácora de decisiones y reproducibilidad.
+\end{itemize}
+
+\end{document}
